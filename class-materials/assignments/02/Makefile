@@ -1,7 +1,7 @@
-O = obj
+O = build/obj
 S = src
 SC = scripts
-B = bin
+B = build/bin
 
 OBJS = \
 	$O/entry.o \
