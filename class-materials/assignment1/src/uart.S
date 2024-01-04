@@ -1,5 +1,5 @@
 .section .text
-.global uartinit, uart_read, uart_write, print_prompt
+.global uart_init, uart_read, uart_write, uart_print_prompt
 /*
 Always add documentation (especially in assembly).
 Initialize the UART, which is placed at 0x10000000 by qemu.
@@ -7,7 +7,7 @@ Initialize the UART, which is placed at 0x10000000 by qemu.
 paramters:
 return: 
 */
-uartinit:
+uart_init:
 	/*
 	This is VERY important, you are an assembly programmer
 	now, you have to manage your own stack. The following
@@ -55,7 +55,7 @@ Once there is, return.
 paramters:
 return: 
 */
-_wait_for_uart_write:
+uart_wait_for_write:
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -63,7 +63,7 @@ _wait_for_uart_write:
 	li t0, 0x10000000					# Address of UART base
 	lb t1, 5(t0)						# Tight loop reading in LSR
 	andi t1, t1, 0x20					# Check LSR transmit holding empty bit 
-	beqz t1, _wait_for_uart_write+20	# End of loop
+	beqz t1, uart_wait_for_write+20		# End of loop
 	ld ra, 8(sp)						# Begin epilogue
 	ld s0, 0(sp)
 	addi sp, sp, 16
@@ -77,7 +77,7 @@ Once there is, return.
 paramters:
 return: 
 */
-_wait_for_uart_read:
+uart_wait_for_read:
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -85,7 +85,7 @@ _wait_for_uart_read:
 	li t0, 0x10000000					# Address of UART base
 	lb t1, 5(t0)						# Tight loop reading in LSR
 	andi t1, t1, 0x01					# Check LSR receive data ready
-	beqz t1, _wait_for_uart_read+20		# End of loop
+	beqz t1, uart_wait_for_read+20		# End of loop
 	ld ra, 8(sp)						# Begin prologue
 	ld s0, 0(sp)
 	addi sp, sp, 16
@@ -105,8 +105,8 @@ uart_write:
 	sd ra, 8(sp)
 	sd fp, 0(sp)
 	add fp, sp, 16						# End prologue
-	call _wait_for_uart_write			# Wait until there is data to read
-	call _uart_put_c						# Write the paramter to the uart, it is already stored in a0
+	call uart_wait_for_write			# Wait until there is data to read
+	call uart_put_c						# Write the paramter to the uart, it is already stored in a0
 	ld ra, 8(sp)						# Begin prologue
 	ld s0, 0(sp)
 	addi sp, sp, 16
@@ -126,8 +126,8 @@ uart_read:
 	sd ra, 8(sp)
 	sd fp, 0(sp)
 	add fp, sp, 16						# End prologue
-	call _wait_for_uart_read				# Wait for data to be available
-	call _uart_get_c						# Read the data, implicitly stored in a0
+	call uart_wait_for_read				# Wait for data to be available
+	call uart_get_c						# Read the data, implicitly stored in a0
 	ld ra, 8(sp)						# Begin epilogue
 	ld s0, 0(sp)
 	addi sp, sp, 16
@@ -141,7 +141,7 @@ paramters:
 	a0: the character to write
 return: 
 */
-_uart_put_c:
+uart_put_c:
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -161,7 +161,7 @@ paramters:
 return: 
 	a0: the character read
 */
-_uart_get_c:
+uart_get_c:
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -180,7 +180,7 @@ Call uart_write twice to print the input prompt.
 paramters:
 return: 
 */
-print_prompt:
+uart_print_prompt:
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)

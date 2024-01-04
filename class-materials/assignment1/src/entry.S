@@ -6,15 +6,15 @@ be placed at 0x80000000.
 */
 .section .text
 /*
-Make the _entry label (memory location) visible to ld.
-This is necessary so it can put _entry at 0x80000000.
+Make the entry label (memory location) visible to ld.
+This is necessary so it can put entry at 0x80000000.
 */
-.global _entry
+.global entry
 /*
 This reserves 4096 bytes in the .bss section, with the label stack0.
 The .bss section will be filled with zeros on program load
 */
-_entry:
+entry:
 	/*
 	Load the stack pointer into $sp
 	*/
@@ -35,12 +35,12 @@ _entry:
 	Jump to subroutine to initialize UART.
 	Pay attetion to the function prologue and epilogue!
 	*/
-	call uartinit
+	call uart_init
 /*
 This is the top of the input loop.
 */
 _prompt:
-	call print_prompt
+	call uart_print_prompt
 /*
 Here we process input until we get a newline or carriage return.
 Each new non-newline-cariiage-return character goes into
