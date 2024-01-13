@@ -19,36 +19,36 @@ void uart_init() {
     uart_write_reg(UART_IER, UART_IER_TX_ENABLE | UART_IER_RX_ENABLE);
 }
 	
-void _wait_for_uart_write() {
+void uart_wait_for_write() {
     while (!(uart_read_reg(UART_LSR) & UART_LSR_TX_IDLE));
 }
 
-void _wait_for_uart_read() {
+void uart_wait_for_read() {
     while (!(uart_read_reg(UART_LSR) & UART_LSR_RX_READY));
 }
 
-void _uart_put_c(char c) {
+void uart_put_c(char c) {
     uart_write_reg(UART_THR, c);
 }
 
-char _uart_get_c() {
+char uart_get_c() {
     return uart_read_reg(UART_RHR);
 }
 
 void uart_write(char c) {
-    _wait_for_uart_write();
-    _uart_put_c(c);
+    uart_wait_for_write();
+    uart_put_c(c);
 }
 
 char uart_read() {
-    _wait_for_uart_read();
-    return _uart_get_c();
+    uart_wait_for_read();
+    return uart_get_c();
 }
 
 void uart_handle_interrupt() {
     // We got an interrupt! Collect the character(s) the user
     // typed and pass them to the console code in main.c.
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {
-        main_handle_input(_uart_get_c());
+        main_handle_input(uart_get_c());
     }
 }

@@ -6,8 +6,8 @@
 
 void start() {
     uart_init();
-    plicinit();
-    plicinithart();
-    trapinithart();
+    plic_init();
+    plic_inithart();
+    trap_inithart();
     main();
 }

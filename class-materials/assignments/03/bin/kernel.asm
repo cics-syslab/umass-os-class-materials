@@ -4,7 +4,7 @@ bin/kernel:     file format elf64-littleriscv
 
 Disassembly of section .text:
 
-0000000080000000 <_entry>:
+0000000080000000 <entry>:
 	/*
 	We have a referrence to the bottom of the stack,
 	but the stack grows down! So add 4096 to get the
@@ -35,21 +35,21 @@ Disassembly of section .text:
     80000014:	284080e7          	jalr	644(ra) # 80000294 <start>
 
 0000000080000018 <spin>:
-input loop above, it will hit this and hang here, letting 
-the programmer see there is an erorr without writing
-all over any variables that might help you debug what happened.
+damaging itself in the process. If something goes wrong and 
+the code leaves the input loop above, it will hit this and 
+hang here, preventing the CPU from doing anything dangerous.
 */
 spin:
         j spin
     80000018:	0000006f          	j	80000018 <spin>
 
-000000008000001c <print_prompt>:
+000000008000001c <main_print_prompt>:
 // This keeps things encapsulated which is a key part of good
 // software design.
 char cmd_buf[MAIN_MAX_CMD_LEN] = { 0 };
 unsigned char idx = 0;
 
-void print_prompt() {
+void main_print_prompt() {
     8000001c:	ff010113          	addi	sp,sp,-16
     80000020:	00113423          	sd	ra,8(sp)
     80000024:	00813023          	sd	s0,0(sp)
@@ -86,9 +86,9 @@ void main_handle_input(char c) {
     80000070:	00d00793          	li	a5,13
     80000074:	04f50263          	beq	a0,a5,800000b8 <main_handle_input+0x64>
             // Make a newline after the output
-            print_buf("\n");
+            util_print_buf("\n");
         }
-        print_prompt();
+        main_print_prompt();
         idx = 0;
     } else if (c == MAIN_ASCII_DELETE) {
     80000078:	07f00793          	li	a5,127
@@ -131,18 +131,18 @@ void main_handle_input(char c) {
         idx++;
     800000d4:	0017879b          	addiw	a5,a5,1
     800000d8:	00f48023          	sb	a5,0(s1)
-        print_buf("\n");
+        util_print_buf("\n");
     800000dc:	00000517          	auipc	a0,0x0
     800000e0:	70c50513          	addi	a0,a0,1804 # 800007e8 <uart_handle_interrupt+0xc8>
     800000e4:	00000097          	auipc	ra,0x0
-    800000e8:	1f8080e7          	jalr	504(ra) # 800002dc <print_buf>
+    800000e8:	1f8080e7          	jalr	504(ra) # 800002dc <util_print_buf>
         if (idx > 1) {
     800000ec:	0004c703          	lbu	a4,0(s1)
     800000f0:	00100793          	li	a5,1
     800000f4:	02e7e463          	bltu	a5,a4,8000011c <main_handle_input+0xc8>
-        print_prompt();
+        main_print_prompt();
     800000f8:	00000097          	auipc	ra,0x0
-    800000fc:	f24080e7          	jalr	-220(ra) # 8000001c <print_prompt>
+    800000fc:	f24080e7          	jalr	-220(ra) # 8000001c <main_print_prompt>
         idx = 0;
     80000100:	00001797          	auipc	a5,0x1
     80000104:	86078c23          	sb	zero,-1928(a5) # 80000978 <idx>
@@ -152,103 +152,103 @@ void main_handle_input(char c) {
     80000110:	00813483          	ld	s1,8(sp)
     80000114:	02010113          	addi	sp,sp,32
     80000118:	00008067          	ret
-            if (strcmp(cmd_buf, "hello") == 0) {
+            if (util_strcmp(cmd_buf, "hello") == 0) {
     8000011c:	00000597          	auipc	a1,0x0
     80000120:	65c58593          	addi	a1,a1,1628 # 80000778 <uart_handle_interrupt+0x58>
     80000124:	00001517          	auipc	a0,0x1
     80000128:	83450513          	addi	a0,a0,-1996 # 80000958 <cmd_buf>
     8000012c:	00000097          	auipc	ra,0x0
-    80000130:	20c080e7          	jalr	524(ra) # 80000338 <strcmp>
+    80000130:	20c080e7          	jalr	524(ra) # 80000338 <util_strcmp>
     80000134:	02051463          	bnez	a0,8000015c <main_handle_input+0x108>
-                print_buf("world");
+                util_print_buf("world");
     80000138:	00000517          	auipc	a0,0x0
     8000013c:	64850513          	addi	a0,a0,1608 # 80000780 <uart_handle_interrupt+0x60>
     80000140:	00000097          	auipc	ra,0x0
-    80000144:	19c080e7          	jalr	412(ra) # 800002dc <print_buf>
-            print_buf("\n");
+    80000144:	19c080e7          	jalr	412(ra) # 800002dc <util_print_buf>
+            util_print_buf("\n");
     80000148:	00000517          	auipc	a0,0x0
     8000014c:	6a050513          	addi	a0,a0,1696 # 800007e8 <uart_handle_interrupt+0xc8>
     80000150:	00000097          	auipc	ra,0x0
-    80000154:	18c080e7          	jalr	396(ra) # 800002dc <print_buf>
+    80000154:	18c080e7          	jalr	396(ra) # 800002dc <util_print_buf>
     80000158:	fa1ff06f          	j	800000f8 <main_handle_input+0xa4>
-            } else if (strcmp(cmd_buf, "charlie") == 0) {
+            } else if (util_strcmp(cmd_buf, "charlie") == 0) {
     8000015c:	00000597          	auipc	a1,0x0
     80000160:	62c58593          	addi	a1,a1,1580 # 80000788 <uart_handle_interrupt+0x68>
     80000164:	00000517          	auipc	a0,0x0
     80000168:	7f450513          	addi	a0,a0,2036 # 80000958 <cmd_buf>
     8000016c:	00000097          	auipc	ra,0x0
-    80000170:	1cc080e7          	jalr	460(ra) # 80000338 <strcmp>
+    80000170:	1cc080e7          	jalr	460(ra) # 80000338 <util_strcmp>
     80000174:	00051c63          	bnez	a0,8000018c <main_handle_input+0x138>
-                print_buf("weinstock");
+                util_print_buf("weinstock");
     80000178:	00000517          	auipc	a0,0x0
     8000017c:	61850513          	addi	a0,a0,1560 # 80000790 <uart_handle_interrupt+0x70>
     80000180:	00000097          	auipc	ra,0x0
-    80000184:	15c080e7          	jalr	348(ra) # 800002dc <print_buf>
+    80000184:	15c080e7          	jalr	348(ra) # 800002dc <util_print_buf>
     80000188:	fc1ff06f          	j	80000148 <main_handle_input+0xf4>
-            } else if (strcmp(cmd_buf, "elizabeth") == 0) {
+            } else if (util_strcmp(cmd_buf, "elizabeth") == 0) {
     8000018c:	00000597          	auipc	a1,0x0
     80000190:	61458593          	addi	a1,a1,1556 # 800007a0 <uart_handle_interrupt+0x80>
     80000194:	00000517          	auipc	a0,0x0
     80000198:	7c450513          	addi	a0,a0,1988 # 80000958 <cmd_buf>
     8000019c:	00000097          	auipc	ra,0x0
-    800001a0:	19c080e7          	jalr	412(ra) # 80000338 <strcmp>
+    800001a0:	19c080e7          	jalr	412(ra) # 80000338 <util_strcmp>
     800001a4:	06051c63          	bnez	a0,8000021c <main_handle_input+0x1c8>
-                print_buf("\n");
+                util_print_buf("\n");
     800001a8:	00000517          	auipc	a0,0x0
     800001ac:	64050513          	addi	a0,a0,1600 # 800007e8 <uart_handle_interrupt+0xc8>
     800001b0:	00000097          	auipc	ra,0x0
-    800001b4:	12c080e7          	jalr	300(ra) # 800002dc <print_buf>
-                print_buf("  _________.__                 .__    .___              \n");
+    800001b4:	12c080e7          	jalr	300(ra) # 800002dc <util_print_buf>
+                util_print_buf("  _________.__                 .__    .___              \n");
     800001b8:	00000517          	auipc	a0,0x0
     800001bc:	5f850513          	addi	a0,a0,1528 # 800007b0 <uart_handle_interrupt+0x90>
     800001c0:	00000097          	auipc	ra,0x0
-    800001c4:	11c080e7          	jalr	284(ra) # 800002dc <print_buf>
-                print_buf(" /   _____/|  |__   ___________|__| __| _/____    ____  \n");
+    800001c4:	11c080e7          	jalr	284(ra) # 800002dc <util_print_buf>
+                util_print_buf(" /   _____/|  |__   ___________|__| __| _/____    ____  \n");
     800001c8:	00000517          	auipc	a0,0x0
     800001cc:	62850513          	addi	a0,a0,1576 # 800007f0 <uart_handle_interrupt+0xd0>
     800001d0:	00000097          	auipc	ra,0x0
-    800001d4:	10c080e7          	jalr	268(ra) # 800002dc <print_buf>
-                print_buf(" \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ \n");
+    800001d4:	10c080e7          	jalr	268(ra) # 800002dc <util_print_buf>
+                util_print_buf(" \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ \n");
     800001d8:	00000517          	auipc	a0,0x0
     800001dc:	65850513          	addi	a0,a0,1624 # 80000830 <uart_handle_interrupt+0x110>
     800001e0:	00000097          	auipc	ra,0x0
-    800001e4:	0fc080e7          	jalr	252(ra) # 800002dc <print_buf>
-                print_buf(" /        \\|   Y  \\  ___/|  | \\/  / /_/ | / __ \\|   |  \\\n");
+    800001e4:	0fc080e7          	jalr	252(ra) # 800002dc <util_print_buf>
+                util_print_buf(" /        \\|   Y  \\  ___/|  | \\/  / /_/ | / __ \\|   |  \\\n");
     800001e8:	00000517          	auipc	a0,0x0
     800001ec:	68850513          	addi	a0,a0,1672 # 80000870 <uart_handle_interrupt+0x150>
     800001f0:	00000097          	auipc	ra,0x0
-    800001f4:	0ec080e7          	jalr	236(ra) # 800002dc <print_buf>
-                print_buf("/_______  /|___|  /\\___  >__|  |__\\____ |(____  /___|  /\n");
+    800001f4:	0ec080e7          	jalr	236(ra) # 800002dc <util_print_buf>
+                util_print_buf("/_______  /|___|  /\\___  >__|  |__\\____ |(____  /___|  /\n");
     800001f8:	00000517          	auipc	a0,0x0
     800001fc:	6b850513          	addi	a0,a0,1720 # 800008b0 <uart_handle_interrupt+0x190>
     80000200:	00000097          	auipc	ra,0x0
-    80000204:	0dc080e7          	jalr	220(ra) # 800002dc <print_buf>
-                print_buf("        \\/      \\/     \\/              \\/     \\/     \\/ \n");
+    80000204:	0dc080e7          	jalr	220(ra) # 800002dc <util_print_buf>
+                util_print_buf("        \\/      \\/     \\/              \\/     \\/     \\/ \n");
     80000208:	00000517          	auipc	a0,0x0
     8000020c:	6e850513          	addi	a0,a0,1768 # 800008f0 <uart_handle_interrupt+0x1d0>
     80000210:	00000097          	auipc	ra,0x0
-    80000214:	0cc080e7          	jalr	204(ra) # 800002dc <print_buf>
+    80000214:	0cc080e7          	jalr	204(ra) # 800002dc <util_print_buf>
     80000218:	f31ff06f          	j	80000148 <main_handle_input+0xf4>
-                print_buf("command not recognized: ");
+                util_print_buf("command not recognized: ");
     8000021c:	00000517          	auipc	a0,0x0
     80000220:	71450513          	addi	a0,a0,1812 # 80000930 <uart_handle_interrupt+0x210>
     80000224:	00000097          	auipc	ra,0x0
-    80000228:	0b8080e7          	jalr	184(ra) # 800002dc <print_buf>
-                print_buf(cmd_buf);
+    80000228:	0b8080e7          	jalr	184(ra) # 800002dc <util_print_buf>
+                util_print_buf(cmd_buf);
     8000022c:	00000517          	auipc	a0,0x0
     80000230:	72c50513          	addi	a0,a0,1836 # 80000958 <cmd_buf>
     80000234:	00000097          	auipc	ra,0x0
-    80000238:	0a8080e7          	jalr	168(ra) # 800002dc <print_buf>
+    80000238:	0a8080e7          	jalr	168(ra) # 800002dc <util_print_buf>
     8000023c:	f0dff06f          	j	80000148 <main_handle_input+0xf4>
         if (idx > 0) { 
     80000240:	00000797          	auipc	a5,0x0
     80000244:	7387c783          	lbu	a5,1848(a5) # 80000978 <idx>
     80000248:	ec0780e3          	beqz	a5,80000108 <main_handle_input+0xb4>
-            print_buf("\b \b");
+            util_print_buf("\b \b");
     8000024c:	00000517          	auipc	a0,0x0
     80000250:	70450513          	addi	a0,a0,1796 # 80000950 <uart_handle_interrupt+0x230>
     80000254:	00000097          	auipc	ra,0x0
-    80000258:	088080e7          	jalr	136(ra) # 800002dc <print_buf>
+    80000258:	088080e7          	jalr	136(ra) # 800002dc <util_print_buf>
             idx--; 
     8000025c:	00000717          	auipc	a4,0x0
     80000260:	71c70713          	addi	a4,a4,1820 # 80000978 <idx>
@@ -271,9 +271,9 @@ void main() {
     // main_handle_input is only called when a key is typed, so we 
     // need to print it here the first time before the user has typed
     // anything.
-    print_prompt();
+    main_print_prompt();
     80000284:	00000097          	auipc	ra,0x0
-    80000288:	d98080e7          	jalr	-616(ra) # 8000001c <print_prompt>
+    80000288:	d98080e7          	jalr	-616(ra) # 8000001c <main_print_prompt>
     while (1) {
         asm("wfi");
     8000028c:	10500073          	wfi
@@ -294,15 +294,15 @@ void start() {
     uart_init();
     800002a4:	00000097          	auipc	ra,0x0
     800002a8:	33c080e7          	jalr	828(ra) # 800005e0 <uart_init>
-    plicinit();
+    plic_init();
     800002ac:	00000097          	auipc	ra,0x0
-    800002b0:	0c8080e7          	jalr	200(ra) # 80000374 <plicinit>
-    plicinithart();
+    800002b0:	0c8080e7          	jalr	200(ra) # 80000374 <plic_init>
+    plic_inithart();
     800002b4:	00000097          	auipc	ra,0x0
-    800002b8:	0e4080e7          	jalr	228(ra) # 80000398 <plicinithart>
-    trapinithart();
+    800002b8:	0e4080e7          	jalr	228(ra) # 80000398 <plic_inithart>
+    trap_inithart();
     800002bc:	00000097          	auipc	ra,0x0
-    800002c0:	148080e7          	jalr	328(ra) # 80000404 <trapinithart>
+    800002c0:	148080e7          	jalr	328(ra) # 80000404 <trap_inithart>
     main();
     800002c4:	00000097          	auipc	ra,0x0
     800002c8:	fb0080e7          	jalr	-80(ra) # 80000274 <main>
@@ -311,11 +311,11 @@ void start() {
     800002d4:	01010113          	addi	sp,sp,16
     800002d8:	00008067          	ret
 
-00000000800002dc <print_buf>:
+00000000800002dc <util_print_buf>:
 #include "uart.h"
 
 
-void print_buf(char *buf) {
+void util_print_buf(char *buf) {
     800002dc:	fe010113          	addi	sp,sp,-32
     800002e0:	00113c23          	sd	ra,24(sp)
     800002e4:	00813823          	sd	s0,16(sp)
@@ -326,7 +326,7 @@ void print_buf(char *buf) {
     unsigned char print_idx = 0;
     while (buf[print_idx] != 0) {
     800002f8:	00054503          	lbu	a0,0(a0)
-    800002fc:	02050263          	beqz	a0,80000320 <print_buf+0x44>
+    800002fc:	02050263          	beqz	a0,80000320 <util_print_buf+0x44>
     unsigned char print_idx = 0;
     80000300:	00000493          	li	s1,0
         uart_write(buf[print_idx]);
@@ -338,7 +338,7 @@ void print_buf(char *buf) {
     while (buf[print_idx] != 0) {
     80000314:	009907b3          	add	a5,s2,s1
     80000318:	0007c503          	lbu	a0,0(a5)
-    8000031c:	fe0514e3          	bnez	a0,80000304 <print_buf+0x28>
+    8000031c:	fe0514e3          	bnez	a0,80000304 <util_print_buf+0x28>
     }
 }
     80000320:	01813083          	ld	ra,24(sp)
@@ -348,9 +348,9 @@ void print_buf(char *buf) {
     80000330:	02010113          	addi	sp,sp,32
     80000334:	00008067          	ret
 
-0000000080000338 <strcmp>:
+0000000080000338 <util_strcmp>:
 
-int strcmp(char *str1, char *str2) {
+int util_strcmp(char *str1, char *str2) {
     80000338:	ff010113          	addi	sp,sp,-16
     8000033c:	00813423          	sd	s0,8(sp)
     80000340:	01010413          	addi	s0,sp,16
@@ -365,45 +365,43 @@ int strcmp(char *str1, char *str2) {
     8000034c:	00158593          	addi	a1,a1,1
     80000350:	fff5c703          	lbu	a4,-1(a1)
         if (c1 == '\0') { return c1 - c2; }
-    80000354:	00078863          	beqz	a5,80000364 <strcmp+0x2c>
+    80000354:	00078863          	beqz	a5,80000364 <util_strcmp+0x2c>
     } while (c1 == c2);
-    80000358:	fee786e3          	beq	a5,a4,80000344 <strcmp+0xc>
+    80000358:	fee786e3          	beq	a5,a4,80000344 <util_strcmp+0xc>
     
     return c1 - c2;
     8000035c:	40e7853b          	subw	a0,a5,a4
-    80000360:	0080006f          	j	80000368 <strcmp+0x30>
+    80000360:	0080006f          	j	80000368 <util_strcmp+0x30>
         if (c1 == '\0') { return c1 - c2; }
     80000364:	40e0053b          	negw	a0,a4
     80000368:	00813403          	ld	s0,8(sp)
     8000036c:	01010113          	addi	sp,sp,16
     80000370:	00008067          	ret
 
-0000000080000374 <plicinit>:
+0000000080000374 <plic_init>:
+
+//
 // the riscv Platform Level Interrupt Controller (PLIC).
 //
 
-void
-plicinit(void)
-{
+void plic_init(void) {
     80000374:	ff010113          	addi	sp,sp,-16
     80000378:	00813423          	sd	s0,8(sp)
     8000037c:	01010413          	addi	s0,sp,16
   // set desired IRQ priorities non-zero (zero = disabled).
   // UARTx_IRQ are the interrupt source numbers, each source gets 4 bytes
-  *(uint32*)(PLIC + UART0_IRQ*4) = 1;
+  *(uint32*)(MEMLAYOUT_PLIC + MEMLAYOUT_UART0_IRQ*4) = 1;
     80000380:	0c0007b7          	lui	a5,0xc000
     80000384:	00100713          	li	a4,1
-    80000388:	02e7a423          	sw	a4,40(a5) # c000028 <_entry-0x73ffffd8>
+    80000388:	02e7a423          	sw	a4,40(a5) # c000028 <entry-0x73ffffd8>
 }
     8000038c:	00813403          	ld	s0,8(sp)
     80000390:	01010113          	addi	sp,sp,16
     80000394:	00008067          	ret
 
-0000000080000398 <plicinithart>:
+0000000080000398 <plic_inithart>:
 
-void
-plicinithart(void)
-{
+void plic_inithart(void) {
     80000398:	ff010113          	addi	sp,sp,-16
     8000039c:	00813423          	sd	s0,8(sp)
     800003a0:	01010413          	addi	s0,sp,16
@@ -412,15 +410,15 @@ plicinithart(void)
   
   // set enable bits for this hart's M-mode
   // for the uart.
-  *(uint32*)PLIC_MENABLE(hart) = (1 << UART0_IRQ);
+  *(uint32*)MEMLAYOUT_PLIC_MENABLE(hart) = (1 << MEMLAYOUT_UART0_IRQ);
     800003a4:	0c0027b7          	lui	a5,0xc002
     800003a8:	40000713          	li	a4,1024
-    800003ac:	00e7a023          	sw	a4,0(a5) # c002000 <_entry-0x73ffe000>
+    800003ac:	00e7a023          	sw	a4,0(a5) # c002000 <entry-0x73ffe000>
 
   // set this hart's M-mode priority threshold to 0.
-  *(uint32*)PLIC_MPRIORITY(hart) = 0;
+  *(uint32*)MEMLAYOUT_PLIC_MPRIORITY(hart) = 0;
     800003b0:	0c2007b7          	lui	a5,0xc200
-    800003b4:	0007a023          	sw	zero,0(a5) # c200000 <_entry-0x73e00000>
+    800003b4:	0007a023          	sw	zero,0(a5) # c200000 <entry-0x73e00000>
 }
     800003b8:	00813403          	ld	s0,8(sp)
     800003bc:	01010113          	addi	sp,sp,16
@@ -429,18 +427,16 @@ plicinithart(void)
 00000000800003c4 <plic_claim>:
 
 // ask the PLIC what interrupt we should serve.
-int
-plic_claim(void)
-{
+int plic_claim(void) {
     800003c4:	ff010113          	addi	sp,sp,-16
     800003c8:	00813423          	sd	s0,8(sp)
     800003cc:	01010413          	addi	s0,sp,16
   int hart = 0;
-  int irq = *(uint32*)PLIC_MCLAIM(hart);
+  int irq = *(uint32*)MEMLAYOUT_PLIC_MCLAIM(hart);
   return irq;
 }
     800003d0:	0c2007b7          	lui	a5,0xc200
-    800003d4:	0047a503          	lw	a0,4(a5) # c200004 <_entry-0x73dffffc>
+    800003d4:	0047a503          	lw	a0,4(a5) # c200004 <entry-0x73dffffc>
     800003d8:	00813403          	ld	s0,8(sp)
     800003dc:	01010113          	addi	sp,sp,16
     800003e0:	00008067          	ret
@@ -448,52 +444,50 @@ plic_claim(void)
 00000000800003e4 <plic_complete>:
 
 // tell the PLIC we've served this IRQ. 
-void
-plic_complete(int irq)
-{
+void plic_complete(int irq) {
     800003e4:	ff010113          	addi	sp,sp,-16
     800003e8:	00813423          	sd	s0,8(sp)
     800003ec:	01010413          	addi	s0,sp,16
   int hart = 0;
-  *(uint32*)PLIC_MCLAIM(hart) = irq;
+  *(uint32*)MEMLAYOUT_PLIC_MCLAIM(hart) = irq;
     800003f0:	0c2007b7          	lui	a5,0xc200
-    800003f4:	00a7a223          	sw	a0,4(a5) # c200004 <_entry-0x73dffffc>
+    800003f4:	00a7a223          	sw	a0,4(a5) # c200004 <entry-0x73dffffc>
 }
     800003f8:	00813403          	ld	s0,8(sp)
     800003fc:	01010113          	addi	sp,sp,16
     80000400:	00008067          	ret
 
-0000000080000404 <trapinithart>:
+0000000080000404 <trap_inithart>:
 #include "plic.h"
 #include "util.h"
 #include "uart.h"
 
 // set up to take exceptions and traps while in the kernel.
-void trapinithart(void) {
+void trap_inithart(void) {
     80000404:	ff010113          	addi	sp,sp,-16
     80000408:	00813423          	sd	s0,8(sp)
     8000040c:	01010413          	addi	s0,sp,16
+  return x;
+}
 
 // Machine-mode interrupt vector
-static inline void 
-w_mtvec(uint64 x)
-{
+static inline void riscv_w_mtvec(uint64 x) {
   asm volatile("csrw mtvec, %0" : : "r" (x));
     80000410:	00000797          	auipc	a5,0x0
     80000414:	0c078793          	addi	a5,a5,192 # 800004d0 <machinevec>
     80000418:	30579073          	csrw	mtvec,a5
   asm volatile("csrr %0, mstatus" : "=r" (x) );
     8000041c:	300027f3          	csrr	a5,mstatus
-  w_mtvec((uint64) machinevec);
-  w_mstatus(r_mstatus() | MSTATUS_MIE);
+  riscv_w_mtvec((uint64) machinevec);
+  riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);
     80000420:	0087e793          	ori	a5,a5,8
   asm volatile("csrw mstatus, %0" : : "r" (x));
     80000424:	30079073          	csrw	mstatus,a5
   asm volatile("csrr %0, mie" : "=r" (x) );
     80000428:	304027f3          	csrr	a5,mie
-  w_mie(r_mie() | MIE_MEIE);
+  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
     8000042c:	00001737          	lui	a4,0x1
-    80000430:	80070713          	addi	a4,a4,-2048 # 800 <_entry-0x7ffff800>
+    80000430:	80070713          	addi	a4,a4,-2048 # 800 <entry-0x7ffff800>
     80000434:	00e7e7b3          	or	a5,a5,a4
   asm volatile("csrw mie, %0" : : "r" (x));
     80000438:	30479073          	csrw	mie,a5
@@ -502,11 +496,11 @@ w_mtvec(uint64 x)
     80000440:	01010113          	addi	sp,sp,16
     80000444:	00008067          	ret
 
-0000000080000448 <devintr>:
+0000000080000448 <trap_devintr>:
+}
+
 // Machine Trap Cause
-static inline uint64
-r_mcause()
-{
+static inline uint64 riscv_r_mcause() {
   uint64 x;
   asm volatile("csrr %0, mcause" : "=r" (x) );
     80000448:	342027f3          	csrr	a5,mcause
@@ -518,14 +512,14 @@ r_mcause()
   return 0;
     8000044c:	00000513          	li	a0,0
   if(((mcause >> 63) & 1) &&
-    80000450:	0007c463          	bltz	a5,80000458 <devintr+0x10>
+    80000450:	0007c463          	bltz	a5,80000458 <trap_devintr+0x10>
     80000454:	00008067          	ret
      (mcause & 0xff) == 11){
     80000458:	0ff7f793          	zext.b	a5,a5
   if(((mcause >> 63) & 1) &&
     8000045c:	00b00713          	li	a4,11
-    80000460:	fee79ae3          	bne	a5,a4,80000454 <devintr+0xc>
-int devintr() {
+    80000460:	fee79ae3          	bne	a5,a4,80000454 <trap_devintr+0xc>
+int trap_devintr() {
     80000464:	fe010113          	addi	sp,sp,-32
     80000468:	00113c23          	sd	ra,24(sp)
     8000046c:	00813823          	sd	s0,16(sp)
@@ -535,13 +529,13 @@ int devintr() {
     80000478:	00000097          	auipc	ra,0x0
     8000047c:	f4c080e7          	jalr	-180(ra) # 800003c4 <plic_claim>
     80000480:	00050493          	mv	s1,a0
-    if(irq == UART0_IRQ){
+    if(irq == MEMLAYOUT_UART0_IRQ){
     80000484:	00a00793          	li	a5,10
-    80000488:	02f50863          	beq	a0,a5,800004b8 <devintr+0x70>
+    80000488:	02f50863          	beq	a0,a5,800004b8 <trap_devintr+0x70>
     return 1;
     8000048c:	00100513          	li	a0,1
     if(irq)
-    80000490:	00048a63          	beqz	s1,800004a4 <devintr+0x5c>
+    80000490:	00048a63          	beqz	s1,800004a4 <trap_devintr+0x5c>
       plic_complete(irq);
     80000494:	00048513          	mv	a0,s1
     80000498:	00000097          	auipc	ra,0x0
@@ -557,7 +551,7 @@ int devintr() {
     800004b8:	00000097          	auipc	ra,0x0
     800004bc:	268080e7          	jalr	616(ra) # 80000720 <uart_handle_interrupt>
     if(irq)
-    800004c0:	fd5ff06f          	j	80000494 <devintr+0x4c>
+    800004c0:	fd5ff06f          	j	80000494 <trap_devintr+0x4c>
 	...
 
 00000000800004d0 <machinevec>:
@@ -634,9 +628,9 @@ machinevec:
     8000054c:	0ff13823          	sd	t6,240(sp)
 
         # call the C trap handler in trap.c
-        call devintr
+        call trap_devintr
     80000550:	00000097          	auipc	ra,0x0
-    80000554:	ef8080e7          	jalr	-264(ra) # 80000448 <devintr>
+    80000554:	ef8080e7          	jalr	-264(ra) # 80000448 <trap_devintr>
 
         # restore registers.
         ld ra, 0(sp)
@@ -721,7 +715,7 @@ void uart_init() {
     // disable interrupts.
     uart_write_reg(UART_IER, UART_IER_GLOBAL_DISABLE);
     800005ec:	100007b7          	lui	a5,0x10000
-    800005f0:	000780a3          	sb	zero,1(a5) # 10000001 <_entry-0x6fffffff>
+    800005f0:	000780a3          	sb	zero,1(a5) # 10000001 <entry-0x6fffffff>
     // special mode to set baud rate.
     uart_write_reg(UART_LCR, UART_LCR_BAUD_LATCH);
     800005f4:	f8000713          	li	a4,-128
@@ -749,61 +743,61 @@ void uart_init() {
     8000061c:	01010113          	addi	sp,sp,16
     80000620:	00008067          	ret
 
-0000000080000624 <_wait_for_uart_write>:
+0000000080000624 <uart_wait_for_write>:
 	
-void _wait_for_uart_write() {
+void uart_wait_for_write() {
     80000624:	ff010113          	addi	sp,sp,-16
     80000628:	00813423          	sd	s0,8(sp)
     8000062c:	01010413          	addi	s0,sp,16
     while (!(uart_read_reg(UART_LSR) & UART_LSR_TX_IDLE));
     80000630:	10000737          	lui	a4,0x10000
-    80000634:	00574783          	lbu	a5,5(a4) # 10000005 <_entry-0x6ffffffb>
+    80000634:	00574783          	lbu	a5,5(a4) # 10000005 <entry-0x6ffffffb>
     80000638:	0207f793          	andi	a5,a5,32
-    8000063c:	fe078ce3          	beqz	a5,80000634 <_wait_for_uart_write+0x10>
+    8000063c:	fe078ce3          	beqz	a5,80000634 <uart_wait_for_write+0x10>
 }
     80000640:	00813403          	ld	s0,8(sp)
     80000644:	01010113          	addi	sp,sp,16
     80000648:	00008067          	ret
 
-000000008000064c <_wait_for_uart_read>:
+000000008000064c <uart_wait_for_read>:
 
-void _wait_for_uart_read() {
+void uart_wait_for_read() {
     8000064c:	ff010113          	addi	sp,sp,-16
     80000650:	00813423          	sd	s0,8(sp)
     80000654:	01010413          	addi	s0,sp,16
     while (!(uart_read_reg(UART_LSR) & UART_LSR_RX_READY));
     80000658:	10000737          	lui	a4,0x10000
-    8000065c:	00574783          	lbu	a5,5(a4) # 10000005 <_entry-0x6ffffffb>
+    8000065c:	00574783          	lbu	a5,5(a4) # 10000005 <entry-0x6ffffffb>
     80000660:	0017f793          	andi	a5,a5,1
-    80000664:	fe078ce3          	beqz	a5,8000065c <_wait_for_uart_read+0x10>
+    80000664:	fe078ce3          	beqz	a5,8000065c <uart_wait_for_read+0x10>
 }
     80000668:	00813403          	ld	s0,8(sp)
     8000066c:	01010113          	addi	sp,sp,16
     80000670:	00008067          	ret
 
-0000000080000674 <_uart_put_c>:
+0000000080000674 <uart_put_c>:
 
-void _uart_put_c(char c) {
+void uart_put_c(char c) {
     80000674:	ff010113          	addi	sp,sp,-16
     80000678:	00813423          	sd	s0,8(sp)
     8000067c:	01010413          	addi	s0,sp,16
     uart_write_reg(UART_THR, c);
     80000680:	100007b7          	lui	a5,0x10000
-    80000684:	00a78023          	sb	a0,0(a5) # 10000000 <_entry-0x70000000>
+    80000684:	00a78023          	sb	a0,0(a5) # 10000000 <entry-0x70000000>
 }
     80000688:	00813403          	ld	s0,8(sp)
     8000068c:	01010113          	addi	sp,sp,16
     80000690:	00008067          	ret
 
-0000000080000694 <_uart_get_c>:
+0000000080000694 <uart_get_c>:
 
-char _uart_get_c() {
+char uart_get_c() {
     80000694:	ff010113          	addi	sp,sp,-16
     80000698:	00813423          	sd	s0,8(sp)
     8000069c:	01010413          	addi	s0,sp,16
     return uart_read_reg(UART_RHR);
     800006a0:	100007b7          	lui	a5,0x10000
-    800006a4:	0007c503          	lbu	a0,0(a5) # 10000000 <_entry-0x70000000>
+    800006a4:	0007c503          	lbu	a0,0(a5) # 10000000 <entry-0x70000000>
 }
     800006a8:	00813403          	ld	s0,8(sp)
     800006ac:	01010113          	addi	sp,sp,16
@@ -818,13 +812,13 @@ void uart_write(char c) {
     800006c0:	00913423          	sd	s1,8(sp)
     800006c4:	02010413          	addi	s0,sp,32
     800006c8:	00050493          	mv	s1,a0
-    _wait_for_uart_write();
+    uart_wait_for_write();
     800006cc:	00000097          	auipc	ra,0x0
-    800006d0:	f58080e7          	jalr	-168(ra) # 80000624 <_wait_for_uart_write>
+    800006d0:	f58080e7          	jalr	-168(ra) # 80000624 <uart_wait_for_write>
     uart_write_reg(UART_THR, c);
     800006d4:	100007b7          	lui	a5,0x10000
-    800006d8:	00978023          	sb	s1,0(a5) # 10000000 <_entry-0x70000000>
-    _uart_put_c(c);
+    800006d8:	00978023          	sb	s1,0(a5) # 10000000 <entry-0x70000000>
+    uart_put_c(c);
 }
     800006dc:	01813083          	ld	ra,24(sp)
     800006e0:	01013403          	ld	s0,16(sp)
@@ -839,13 +833,13 @@ char uart_read() {
     800006f4:	00113423          	sd	ra,8(sp)
     800006f8:	00813023          	sd	s0,0(sp)
     800006fc:	01010413          	addi	s0,sp,16
-    _wait_for_uart_read();
+    uart_wait_for_read();
     80000700:	00000097          	auipc	ra,0x0
-    80000704:	f4c080e7          	jalr	-180(ra) # 8000064c <_wait_for_uart_read>
+    80000704:	f4c080e7          	jalr	-180(ra) # 8000064c <uart_wait_for_read>
     return uart_read_reg(UART_RHR);
     80000708:	100007b7          	lui	a5,0x10000
-    8000070c:	0007c503          	lbu	a0,0(a5) # 10000000 <_entry-0x70000000>
-    return _uart_get_c();
+    8000070c:	0007c503          	lbu	a0,0(a5) # 10000000 <entry-0x70000000>
+    return uart_get_c();
 }
     80000710:	00813083          	ld	ra,8(sp)
     80000714:	00013403          	ld	s0,0(sp)
@@ -859,7 +853,7 @@ void uart_handle_interrupt() {
     // typed and pass them to the console code in main.c.
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {
     80000720:	100007b7          	lui	a5,0x10000
-    80000724:	0057c783          	lbu	a5,5(a5) # 10000005 <_entry-0x6ffffffb>
+    80000724:	0057c783          	lbu	a5,5(a5) # 10000005 <entry-0x6ffffffb>
     80000728:	0017f793          	andi	a5,a5,1
     8000072c:	04078463          	beqz	a5,80000774 <uart_handle_interrupt+0x54>
 void uart_handle_interrupt() {
@@ -870,8 +864,8 @@ void uart_handle_interrupt() {
     80000740:	02010413          	addi	s0,sp,32
     return uart_read_reg(UART_RHR);
     80000744:	100004b7          	lui	s1,0x10000
-    80000748:	0004c503          	lbu	a0,0(s1) # 10000000 <_entry-0x70000000>
-        main_handle_input(_uart_get_c());
+    80000748:	0004c503          	lbu	a0,0(s1) # 10000000 <entry-0x70000000>
+        main_handle_input(uart_get_c());
     8000074c:	00000097          	auipc	ra,0x0
     80000750:	908080e7          	jalr	-1784(ra) # 80000054 <main_handle_input>
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {

@@ -1,7 +1,7 @@
 #include "uart.h"
 
 
-void print_buf(char *buf) {
+void util_print_buf(char *buf) {
     unsigned char print_idx = 0;
     while (buf[print_idx] != 0) {
         uart_write(buf[print_idx]);
@@ -9,7 +9,7 @@ void print_buf(char *buf) {
     }
 }
 
-int strcmp(char *str1, char *str2) {
+int util_strcmp(char *str1, char *str2) {
     const unsigned char *s1 = (const unsigned char *) str1;
     const unsigned char *s2 = (const unsigned char *) str2;
     unsigned char c1, c2;
