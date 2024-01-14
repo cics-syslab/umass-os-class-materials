@@ -1,4 +1,4 @@
-void plic_init(void);
-void plic_inithart(void);
-int plic_claim(void);
+void plic_init();
+void plic_inithart();
+int plic_claim();
 void plic_complete(int irq);
