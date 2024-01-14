@@ -179,6 +179,10 @@ static inline uint64 riscv_r_scause() {
   return x;
 }
 
+#define RISCV_MCAUSE_IS_INTERRUPT(mcause) ((mcause >> 63) & 1)
+#define RISCV_MCAUSE_INTERRUPT_CAUSE(mcause) (mcause & 0x7FFFFFFFFFFFFFFF)
+#define RISCV_MCAUSE_MACHINE_EXTERNAL_INTERRUPT 11
+
 // Machine Trap Cause
 static inline uint64 riscv_r_mcause() {
   uint64 x;
