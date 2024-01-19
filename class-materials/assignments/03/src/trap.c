@@ -13,11 +13,7 @@ void trap_inithart() {
   riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
 }
 
-// check if it's an external interrupt or software interrupt,
-// and handle it.
-// returns 2 if timer interrupt,
-// 1 if other device,
-// 0 if not recognized.
+// Handle incoming interrupts and exceptions
 int trap_devintr() {
   uint64 mcause = riscv_r_mcause();
 
