@@ -1,7 +1,7 @@
-O = obj
+O = build/obj
 S = src
 SC = scripts
-B = bin
+B = build/bin
 
 OBJS = \
 	$O/entry.o \
@@ -13,8 +13,7 @@ OBJS = \
 	$O/machinevec.o \
 	$O/uart.o \
 	$O/timer.o \
-	$O/proc.o \
-	$O/riscv.o
+	$O/proc.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
