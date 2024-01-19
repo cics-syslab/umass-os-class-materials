@@ -2,4 +2,4 @@
 #include "riscv.h"
 #include "types.h"
 
-void timerinit();
+void timer_init();

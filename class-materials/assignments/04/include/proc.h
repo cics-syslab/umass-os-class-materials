@@ -1,6 +1,6 @@
 #include "types.h"
 
-struct register_set {
+struct proc_register_set {
   uint64 ra;
   uint64 sp;
   uint64 gp;
@@ -35,7 +35,7 @@ struct register_set {
 };
 
 struct proc {
-  struct register_set regs;
-};
+  struct proc_register_set kernel_registers;
+  struct proc_register_set user_registers;
 
-void schedule();
+};

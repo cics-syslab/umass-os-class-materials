@@ -65,13 +65,13 @@
 //      H-mode, S-mode, and U-mode contexts sequentially in that order.
 
 // qemu puts UART registers here in physical memory.
-#define UART0 0x10000000L
-#define UART0_IRQ 10
+#define MEMLAYOUT_UART0 0x10000000L
+#define MEMLAYOUT_UART0_IRQ 10
 
 // qemu puts platform-level interrupt controller (PLIC) here.
-#define PLIC 0x0c000000L
-#define PLIC_PRIORITY (PLIC + 0x0)
-#define PLIC_PENDING (PLIC + 0x1000)
+#define MEMLAYOUT_PLIC 0x0c000000L
+#define MEMLAYOUT_PLIC_PRIORITY (MEMLAYOUT_PLIC + 0x0)
+#define MEMLAYOUT_PLIC_PENDING (MEMLAYOUT_PLIC + 0x1000)
 
 // core local interruptor (CLINT), which contains the timer.
 // CLINT
@@ -80,9 +80,9 @@
 // For more specific information on how we came up with these macros
 // take a look at the qemu implementation:
 // https://github.com/qemu/qemu/blob/master/hw/intc/riscv_aclint.c#L124
-#define CLINT 0x2000000L
-#define CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8 * (hartid))
-#define CLINT_MTIME (CLINT + 0xBFF8) // cycles since boot.
+#define MEMLAYOUT_CLINT 0x2000000L
+#define MEMLAYOUT_CLINT_MTIMECMP(hartid) (MEMLAYOUT_CLINT + 0x4000 + 8 * (hartid))
+#define MEMLAYOUT_CLINT_MTIME (MEMLAYOUT_CLINT + 0xBFF8)  // cycles since boot.
 
 /*
 We know these are the locations of the target registers from
@@ -96,6 +96,6 @@ It is also supporrted by the function that ultimately assigns
 the order to the target registers by parsing a config string
 https://github.com/qemu/qemu/blob/master/hw/intc/sifive_plic.c#L292
 */
-#define PLIC_MENABLE(hart) (PLIC + 0x2000 + (hart) * 0x100)
-#define PLIC_MPRIORITY(hart) (PLIC + 0x200000 + (hart) * 0x2000)
-#define PLIC_MCLAIM(hart) (PLIC + 0x200004 + (hart) * 0x2000)
+#define MEMLAYOUT_PLIC_MENABLE(hart) (MEMLAYOUT_PLIC + 0x2000 + (hart) * 0x100)
+#define MEMLAYOUT_PLIC_MPRIORITY(hart) (MEMLAYOUT_PLIC + 0x200000 + (hart) * 0x2000)
+#define MEMLAYOUT_PLIC_MCLAIM(hart) (MEMLAYOUT_PLIC + 0x200004 + (hart) * 0x2000)

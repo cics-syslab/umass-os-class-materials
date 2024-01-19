@@ -6,19 +6,15 @@ be placed at 0x80000000.
 */
 .section .text
 /*
-Make the _entry label (memory location) visible to ld.
-This is necessary so it can put _entry at 0x80000000.
+Make the entry label (memory location) visible to ld.
+This is necessary so it can put entry at 0x80000000.
 */
-.global _entry
-/* 
-Expose our library calls to the linker.
-*/
-.global uart_read, uart_write, uartinit
+.global entry
 /*
 This reserves 4096 bytes in the .bss section, with the label stack0.
 The .bss section will be filled with zeros on program load
 */
-_entry:
+entry:
 	/*
 	We have a referrence to the bottom of the stack,
 	but the stack grows down! So add 4096 to get the
@@ -36,7 +32,7 @@ _entry:
 	Always initialize variables!
 	*/
 	sb zero, 0(sp)
-	/* 
+	/*
 	Once the C stack is set up, we jump to a C routine to handle the
 	rest of the OS operation. You can still call the assembly functions
 	you already wrote, but the rest of this course you will mostly
@@ -45,11 +41,13 @@ _entry:
 	call start
 
 /*
-This is an endless spin 🤔? What's the point of that.
-Well if something goes wrong and the code leaves the 
-input loop above, it will hit this and hang here, letting 
-the programmer see there is an erorr without writing
-all over any variables that might help you debug what happened.
+This is an endless spin 🤔? What's the point of that. Remember
+that a computer has no idea what it's executing, even though
+our program ends here, the CPU will happily keep executing
+whatever random instructions it finds after this, possibly
+damaging itself in the process. If something goes wrong and 
+the code leaves the input loop above, it will hit this and 
+hang here, preventing the CPU from doing anything dangerous.
 */
 spin:
         j spin

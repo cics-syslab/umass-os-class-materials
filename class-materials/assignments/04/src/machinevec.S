@@ -42,7 +42,7 @@ machinevec:
         sd t6, 240(sp)
 
         # call the C trap handler in trap.c
-        call devintr
+        call trap_devintr
 
         # restore registers.
         ld ra, 0(sp)

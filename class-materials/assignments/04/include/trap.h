@@ -2,5 +2,5 @@
 #include "memlayout.h"
 #include "riscv.h"
 
-void trapinithart();
-int devintr();
+void trap_inithart();
+int trap_devintr();

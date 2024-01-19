@@ -1,15 +1,14 @@
 #include "main.h"
-
 #include "uart.h"
 #include "util.h"
 
 // We have moved the old main loop code into our uart handler.
 // This keeps things encapsulated which is a key part of good
 // software design.
-char cmd_buf[MAIN_MAX_CMD_LEN] = {0};
-unsigned char idx = 0;
+char main_cmd_buf[MAIN_MAX_CMD_LEN] = {0};
+unsigned char main_idx = 0;
 
-void print_prompt() {
+void main_print_prompt() {
   uart_write('>');
   uart_write(' ');
 }
@@ -25,42 +24,37 @@ void main_handle_input(char c) {
   if (c == MAIN_ASCII_NEW_LINE || c == MAIN_ASCII_CARRIAGE_RETURN) {
     // Insert null terminator in place of newline character,
     // otherwise we might read into old commands in the buffer
-    cmd_buf[idx] = 0;
-    idx++;
+    main_cmd_buf[main_idx] = 0;
+    main_idx++;
     // Convert the carriage return to a newline and echo it back to user
-    print_buf("\n");
+    util_print_buf("\n");
     // Process commands if the user has typed anything besides a newline
-    if (idx > 1) {
+    if (main_idx > 1) {
       // Parse special commands.
       // Credit to my wonderful friend Charlie and my lovely girlfriend
       // Elizabeth Sheridan. A reminder to always personalize your os and also
       // stop working on it occasionally and get some fresh air.
-      if (strcmp(cmd_buf, "hello") == 0) {
-        print_buf("world");
-      } else if (strcmp(cmd_buf, "charlie") == 0) {
-        print_buf("weinstock");
-      } else if (strcmp(cmd_buf, "elizabeth") == 0) {
-        print_buf("\n");
-        print_buf("  _________.__                 .__    .___              \n");
-        print_buf(" /   _____/|  |__   ___________|__| __| _/____    ____  \n");
-        print_buf(
-            " \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ "
-            "\n");
-        print_buf(
-            " /        \\|   Y  \\  ___/|  | \\/  / /_/ | / __ \\|   |  \\\n");
-        print_buf(
-            "/_______  /|___|  /\\___  >__|  |__\\____ |(____  /___|  /\n");
-        print_buf(
-            "        \\/      \\/     \\/              \\/     \\/     \\/ \n");
+      if (util_strcmp(main_cmd_buf, "hello") == 0) {
+        util_print_buf("world");
+      } else if (util_strcmp(main_cmd_buf, "charlie") == 0) {
+        util_print_buf("weinstock");
+      } else if (util_strcmp(main_cmd_buf, "elizabeth") == 0) {
+        util_print_buf("\n");
+        util_print_buf("  _________.__                 .__    .___              \n");
+        util_print_buf(" /   _____/|  |__   ___________|__| __| _/____    ____  \n");
+        util_print_buf(" \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ ""\n");
+        util_print_buf(" /        \\|   Y  \\  ___/|  | \\/  / /_/ | / __ \\|   |  \\\n");
+        util_print_buf("/_______  /|___|  /\\___  >__|  |__\\____ |(____  /___|  /\n");
+        util_print_buf("        \\/      \\/     \\/              \\/     \\/     \\/ \n");
       } else {
-        print_buf("command not recognized: ");
-        print_buf(cmd_buf);
+        util_print_buf("command not recognized: ");
+        util_print_buf(main_cmd_buf);
       }
       // Make a newline after the output
-      print_buf("\n");
+      util_print_buf("\n");
     }
-    print_prompt();
-    idx = 0;
+    main_print_prompt();
+    main_idx = 0;
   } else if (c == MAIN_ASCII_DELETE) {
     // Overwrite last character with a space on screen,
     // don't save delete character and decrement idx
@@ -68,16 +62,16 @@ void main_handle_input(char c) {
     // terminator, it always gets inserted on newline.
     // Important check: only delete if there is actually
     // a character to be deleted! (idx > 0)
-    if (idx > 0) {
-      print_buf("\b \b");
-      idx--;
+    if (main_idx > 0) {
+      util_print_buf("\b \b");
+      main_idx--;
     }
   } else {
     // Make sure to always leave a null terminator, otherwise
     // *bad things* will happen. Don't save \n or \r
-    if (idx < MAIN_MAX_CMD_LEN - 1) {
-      cmd_buf[idx] = c;
-      idx++;
+    if (main_idx < MAIN_MAX_CMD_LEN - 1) {
+      main_cmd_buf[main_idx] = c;
+      main_idx++;
     }
     // Echo the character back to the console
     uart_write(c);
@@ -96,7 +90,7 @@ void main() {
   // main_handle_input is only called when a key is typed, so we
   // need to print it here the first time before the user has typed
   // anything.
-  print_prompt();
+  main_print_prompt();
   while (1) {
     asm("wfi");
   }
