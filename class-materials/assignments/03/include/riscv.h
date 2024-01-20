@@ -33,49 +33,6 @@ static inline void riscv_w_mepc(uint64 x) {
   asm volatile("csrw mepc, %0" : : "r" (x));
 }
 
-// Supervisor Status Register, sstatus
-
-#define RISCV_SSTATUS_SPP (1L << 8)  // Previous mode, 1=Supervisor, 0=User
-#define RISCV_SSTATUS_SPIE (1L << 5) // Supervisor Previous Interrupt Enable
-#define RISCV_SSTATUS_UPIE (1L << 4) // User Previous Interrupt Enable
-#define RISCV_SSTATUS_SIE (1L << 1)  // Supervisor Interrupt Enable
-#define RISCV_SSTATUS_UIE (1L << 0)  // User Interrupt Enable
-
-static inline uint64 riscv_r_sstatus() {
-  uint64 x;
-  asm volatile("csrr %0, sstatus" : "=r" (x) );
-  return x;
-}
-
-static inline void riscv_w_sstatus(uint64 x) {
-  asm volatile("csrw sstatus, %0" : : "r" (x));
-}
-
-// Supervisor Interrupt Pending
-static inline uint64 riscv_r_sip() {
-  uint64 x;
-  asm volatile("csrr %0, sip" : "=r" (x) );
-  return x;
-}
-
-static inline void riscv_w_sip(uint64 x) {
-  asm volatile("csrw sip, %0" : : "r" (x));
-}
-
-// Supervisor Interrupt Enable
-#define RISCV_SIE_SEIE (1L << 9) // external
-#define RISCV_SIE_STIE (1L << 5) // timer
-#define RISCV_SIE_SSIE (1L << 1) // software
-static inline uint64 riscv_r_sie() {
-  uint64 x;
-  asm volatile("csrr %0, sie" : "=r" (x) );
-  return x;
-}
-
-static inline void riscv_w_sie(uint64 x) {
-  asm volatile("csrw sie, %0" : : "r" (x));
-}
-
 // Machine-mode Interrupt Enable
 #define RISCV_MIE_MEIE (1L << 11) // external
 #define RISCV_MIE_MTIE (1L << 7)  // timer
@@ -88,19 +45,6 @@ static inline uint64 riscv_r_mie() {
 
 static inline void riscv_w_mie(uint64 x) {
   asm volatile("csrw mie, %0" : : "r" (x));
-}
-
-// supervisor exception program counter, holds the
-// instruction address to which a return from
-// exception will go.
-static inline void riscv_w_sepc(uint64 x) {
-  asm volatile("csrw sepc, %0" : : "r" (x));
-}
-
-static inline uint64 riscv_r_sepc() {
-  uint64 x;
-  asm volatile("csrr %0, sepc" : "=r" (x) );
-  return x;
 }
 
 // Machine Exception Delegation
@@ -123,18 +67,6 @@ static inline uint64 riscv_r_mideleg() {
 
 static inline void riscv_w_mideleg(uint64 x) {
   asm volatile("csrw mideleg, %0" : : "r" (x));
-}
-
-// Supervisor Trap-Vector Base Address
-// low two bits are mode.
-static inline void riscv_w_stvec(uint64 x) {
-  asm volatile("csrw stvec, %0" : : "r" (x));
-}
-
-static inline uint64 riscv_r_stvec() {
-  uint64 x;
-  asm volatile("csrr %0, stvec" : "=r" (x) );
-  return x;
 }
 
 // Machine-mode interrupt vector
@@ -172,13 +104,6 @@ static inline void riscv_w_mscratch(uint64 x) {
   asm volatile("csrw mscratch, %0" : : "r" (x));
 }
 
-// Supervisor Trap Cause
-static inline uint64 riscv_r_scause() {
-  uint64 x;
-  asm volatile("csrr %0, scause" : "=r" (x) );
-  return x;
-}
-
 #define RISCV_MCAUSE_IS_INTERRUPT(mcause) ((mcause >> 63) & 1)
 #define RISCV_MCAUSE_INTERRUPT_CAUSE(mcause) (mcause & 0x7FFFFFFFFFFFFFFF)
 #define RISCV_MCAUSE_MACHINE_EXTERNAL_INTERRUPT 11
@@ -187,13 +112,6 @@ static inline uint64 riscv_r_scause() {
 static inline uint64 riscv_r_mcause() {
   uint64 x;
   asm volatile("csrr %0, mcause" : "=r" (x) );
-  return x;
-}
-
-// Supervisor Trap Value
-static inline uint64 riscv_r_stval() {
-  uint64 x;
-  asm volatile("csrr %0, stval" : "=r" (x) );
   return x;
 }
 
@@ -217,18 +135,18 @@ static inline uint64 riscv_r_time() {
 
 // enable device interrupts
 static inline void riscv_intr_on() {
-  riscv_w_sstatus(riscv_r_sstatus() | RISCV_SSTATUS_SIE);
+  riscv_w_sstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);
 }
 
 // disable device interrupts
 static inline void riscv_intr_off() {
-  riscv_w_sstatus(riscv_r_sstatus() & ~RISCV_SSTATUS_SIE);
+  riscv_w_sstatus(riscv_r_mstatus() & ~RISCV_MSTATUS_MIE);
 }
 
 // are device interrupts enabled?
 static inline int riscv_intr_get() {
-  uint64 x = riscv_r_sstatus();
-  return (x & RISCV_SSTATUS_SIE) != 0;
+  uint64 x = riscv_r_mstatus();
+  return (x & RISCV_MSTATUS_MIE) != 0;
 }
 
 static inline uint64 riscv_r_sp() {
