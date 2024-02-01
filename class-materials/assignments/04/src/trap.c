@@ -42,7 +42,6 @@ int trap_devintr() {
       // adjust the mtimecmp value to clear the interrupt and schedule the next one
       int id = riscv_r_mhartid();
       *(uint64 *)MEMLAYOUT_CLINT_MTIMECMP(id) = *(uint64 *)MEMLAYOUT_CLINT_MTIME + PARAMETERS_INTERRUPT_INTERVAL;
-
       proc_schedule();
       return 1;
     }

@@ -5,4 +5,6 @@
 
 
 void main();
+void main2();
+void main3();
 void main_handle_input(char c);

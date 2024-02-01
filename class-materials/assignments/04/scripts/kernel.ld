@@ -18,5 +18,11 @@ SECTIONS
     _stack_start = .;
     . += 0x1000;
     PROVIDE(stack0 = .);
+    . += 0x1000;
+    PROVIDE(stack1 = .);
+    . += 0x1000;
+    PROVIDE(stack2 = .);
+    . += 0x1000;
+    PROVIDE(stack3 = .);
   }
 }

@@ -4,6 +4,7 @@
 #include "trap.h"
 #include "uart.h"
 #include "proc.h"
+#include "util.h"
 
 void start() {
   uart_init();
@@ -11,11 +12,12 @@ void start() {
   plic_inithart();
   trap_inithart();
   timer_inithart();
+  proc_init();
 
   // enable machine-mode interrupts.
   riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);     // globally enable machine mode interrupts
-riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);                // enable machine mode external interrupts
-  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MTIE);                // enable machine mode timer interrupts
 
-  proc_schedule();
+  util_print_buf("Switching to proc A\n");
+  riscv_w_sp(proc_processes[0].kernel_context.sp);
+  proc_first_schedule();
 }

@@ -1,23 +1,15 @@
+#ifndef _PROC_H
+#define _PROC_H
 #include "types.h"
 
-struct proc_register_set {
+// Saved registers for kernel context switches.
+struct proc_kernel_context {
   uint64 ra;
   uint64 sp;
-  uint64 gp;
-  uint64 tp;
-  uint64 t0;
-  uint64 t1;
-  uint64 t2;
+
+  // callee-saved
   uint64 s0;
   uint64 s1;
-  uint64 a0;
-  uint64 a1;
-  uint64 a2;
-  uint64 a3;
-  uint64 a4;
-  uint64 a5;
-  uint64 a6;
-  uint64 a7;
   uint64 s2;
   uint64 s3;
   uint64 s4;
@@ -28,14 +20,16 @@ struct proc_register_set {
   uint64 s9;
   uint64 s10;
   uint64 s11;
-  uint64 t3;
-  uint64 t4;
-  uint64 t5;
-  uint64 t6;
 };
 
 struct proc {
-  struct proc_register_set kernel_registers;
-  struct proc_register_set user_registers;
-
+  struct proc_kernel_context kernel_context;
+  void (*entry)(void);
 };
+
+extern struct proc proc_processes[];
+
+void proc_init();
+void proc_schedule();
+void proc_first_schedule();
+#endif // _PROC_H

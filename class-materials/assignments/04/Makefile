@@ -13,7 +13,8 @@ OBJS = \
 	$O/machinevec.o \
 	$O/uart.o \
 	$O/timer.o \
-	$O/proc.o
+	$O/proc.o \
+	$O/switch.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
