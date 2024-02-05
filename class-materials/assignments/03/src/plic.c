@@ -1,5 +1,6 @@
 #include "memlayout.h"
 #include "types.h"
+#include "riscv.h"
 
 //
 // the riscv Platform Level Interrupt Controller (PLIC).
@@ -9,6 +10,7 @@ void plic_init() {
   // set desired IRQ priorities non-zero (zero = disabled).
   // UARTx_IRQ are the interrupt source numbers, each source gets 4 bytes
   *(uint32*)(MEMLAYOUT_PLIC + MEMLAYOUT_UART0_IRQ*4) = 1;
+  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);      
 }
 
 void plic_inithart() {

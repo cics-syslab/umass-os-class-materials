@@ -9,5 +9,8 @@ void start() {
     plic_init();
     plic_inithart();
     trap_inithart();
+    // enable machine-mode interrupts.
+    riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);     // globally enable machine mode interrupts
+
     main();
 }

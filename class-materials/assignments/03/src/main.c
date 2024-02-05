@@ -32,8 +32,7 @@ void main_handle_input(char c) {
         if (main_idx > 1) {
             // Parse special commands.
             // Credit to my wonderful friend Charlie and my lovely girlfriend Elizabeth Sheridan.
-            // A reminder to always personalize your os and also stop working on it 
-            // occasionally and get some fresh air.
+            // A reminder that this is your os and you can personalize it.
             if (util_strcmp(main_cmd_buf, "hello") == 0) {
                 util_print_buf("world");
             } else if (util_strcmp(main_cmd_buf, "charlie") == 0) {
@@ -66,7 +65,6 @@ void main_handle_input(char c) {
             util_print_buf("\b \b");
             main_idx--; 
         }
-
     } else {
         // Make sure to always leave a null terminator, otherwise
         // *bad things* will happen. Don't save \n or \r

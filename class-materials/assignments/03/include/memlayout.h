@@ -66,7 +66,7 @@
 //      H-mode, S-mode, and U-mode contexts sequentially in that order.
 
 // qemu puts UART registers here in physical memory.
-#define MEMLAYOUT_MEMLAYOUT_UART0 0x10000000L
+#define MEMLAYOUT_UART0 0x10000000L
 #define MEMLAYOUT_UART0_IRQ 10
 
 // qemu puts platform-level interrupt controller (PLIC) here.

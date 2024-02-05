@@ -1,16 +1,15 @@
-#include "types.h"
-#include "memlayout.h"
-#include "riscv.h"
 #include "machinevec.h"
+#include "memlayout.h"
 #include "plic.h"
-#include "util.h"
+#include "riscv.h"
+#include "types.h"
 #include "uart.h"
+#include "util.h"
 
 // set up to take exceptions and traps while in the kernel.
 void trap_inithart() {
   riscv_w_mtvec((uint64) machinevec);
   riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);
-  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
 }
 
 // Handle incoming interrupts and exceptions
