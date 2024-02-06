@@ -2,6 +2,7 @@ O = build/obj
 S = src
 SC = scripts
 B = build/bin
+I = include
 
 OBJS = \
 	$O/entry.o \
@@ -50,7 +51,7 @@ CFLAGS += -march=rv64g -mabi=lp64d
 CFLAGS += -MD
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
-CFLAGS += -I./include
+CFLAGS += -I$(I)
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -63,7 +64,7 @@ endif
 
 LDFLAGS = -z max-page-size=4096
 
-$(B)/kernel: $(OBJS) $(SC)/kernel.ld
+$(B)/kernel: $(OBJS) $(SC)/kernel.ld $(I)/parameters.h
 	$(LD) $(LDFLAGS) -T $(SC)/kernel.ld -o $(B)/kernel $(OBJS) 
 	$(OBJDUMP) -S $(B)/kernel > $(B)/kernel.asm
 	$(OBJDUMP) -t $(B)/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $(B)/kernel.sym

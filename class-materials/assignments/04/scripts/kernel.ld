@@ -18,6 +18,9 @@ SECTIONS
     _stack_start = .;
     . += 0x1000;
     PROVIDE(stack0 = .);
+    /*
+     * Make new stacks for our processes
+     */
     . += 0x1000;
     PROVIDE(stack1 = .);
     . += 0x1000;

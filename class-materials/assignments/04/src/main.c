@@ -1,11 +1,11 @@
-#include "main.h"
 #include "uart.h"
 #include "util.h"
+#include "main.h"
 
 // We have moved the old main loop code into our uart handler.
 // This keeps things encapsulated which is a key part of good
 // software design.
-char main_cmd_buf[MAIN_MAX_CMD_LEN] = {0};
+char main_cmd_buf[MAIN_MAX_CMD_LEN] = { 0 };
 unsigned char main_idx = 0;
 
 void main_print_prompt() {
@@ -31,9 +31,8 @@ void main_handle_input(char c) {
     // Process commands if the user has typed anything besides a newline
     if (main_idx > 1) {
       // Parse special commands.
-      // Credit to my wonderful friend Charlie and my lovely girlfriend
-      // Elizabeth Sheridan. A reminder to always personalize your os and also
-      // stop working on it occasionally and get some fresh air.
+      // Credit to my wonderful friend Charlie and my lovely girlfriend Elizabeth Sheridan.
+            // A reminder that this is your os and you can personalize it.
       if (util_strcmp(main_cmd_buf, "hello") == 0) {
         util_print_buf("world");
       } else if (util_strcmp(main_cmd_buf, "charlie") == 0) {
@@ -42,7 +41,7 @@ void main_handle_input(char c) {
         util_print_buf("\n");
         util_print_buf("  _________.__                 .__    .___              \n");
         util_print_buf(" /   _____/|  |__   ___________|__| __| _/____    ____  \n");
-        util_print_buf(" \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ ""\n");
+        util_print_buf(" \\_____  \\ |  |  \\_/ __ \\_  __ \\  |/ __ |\\__  \\  /    \\ \n");
         util_print_buf(" /        \\|   Y  \\  ___/|  | \\/  / /_/ | / __ \\|   |  \\\n");
         util_print_buf("/_______  /|___|  /\\___  >__|  |__\\____ |(____  /___|  /\n");
         util_print_buf("        \\/      \\/     \\/              \\/     \\/     \\/ \n");
@@ -78,24 +77,23 @@ void main_handle_input(char c) {
   }
 }
 
-// All of the input is now handled by the trap, so we have nothing to
-// do in the main loop except wait for an interrupt. We could've used
-// a spin loop, but as you may have noticed, this actually uses quite
-// a bit of power. What we really want to do is to tell the CPU to do
-// nothing until an interrupt arrives. Conveniently riscv has a
-// "Wait For Interrupt (wfi)" command that does just that. So our new
-// loop will just continuously sleep the CPU while waiting for a
-// keyboard interrupt.
+// Now that we are trying to make multiple functions we'll replace the wfi
+// loop with a loop that prints A forever. We use a long for loop to delay
+// it enough that we can see what's going on. (N.B. we're back to using a
+// ton of CPU without the wfi loop, but hey at least we're printing
+// something.)
 void main() {
   // main_handle_input is only called when a key is typed, so we
   // need to print it here the first time before the user has typed
   // anything.
+  main_print_prompt("> ");
   while (1) {
     for (int i = 0; i < 500000000; i++);
     uart_write('A');
   }
 }
 
+// We make a few additional functions to run in different processes.
 void main2() {
   while (1) {
     for (int i = 0; i < 500000000; i++);

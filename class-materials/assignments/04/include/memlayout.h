@@ -24,7 +24,8 @@
 // These two files define the EEI that qemu provides to xv6, including among many things
 // the plic interrupt source numbers for the uart and the virtio mmio interfaces,
 // referred to as IRQs (why IRQ?, why are they not sequential?, why are they not ordered?,
-// these are the unanswerable questions of OS development :) )
+// that is simply how the manufacturers designed the board we're using (even if it's virtual)
+// Why did they do it that way? That is one of many unanswerable questions of OS development 😁)
 // enum {
 //     UART0_IRQ = 10,
 //     RTC_IRQ = 11,
@@ -57,7 +58,7 @@
 // };
 //
 // This help us understand the layout of the interrupt targets
-// as well.
+// for the plic.
 // https://github.com/qemu/qemu/blob/master/hw/intc/sifive_plic.c#L292
 // In short, the targets are arrange according to this pattern
 //      Interrupt targets are mapped to harts sequentially,
