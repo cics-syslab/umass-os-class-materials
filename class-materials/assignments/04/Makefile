@@ -2,7 +2,6 @@ O = build/obj
 S = src
 SC = scripts
 B = build/bin
-I = include
 
 OBJS = \
 	$O/entry.o \
@@ -51,7 +50,7 @@ CFLAGS += -march=rv64g -mabi=lp64d
 CFLAGS += -MD
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
-CFLAGS += -I$(I)
+CFLAGS += -I./include
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -64,7 +63,7 @@ endif
 
 LDFLAGS = -z max-page-size=4096
 
-$(B)/kernel: $(OBJS) $(SC)/kernel.ld $(I)/parameters.h
+$(B)/kernel: $(OBJS) $(SC)/kernel.ld
 	$(LD) $(LDFLAGS) -T $(SC)/kernel.ld -o $(B)/kernel $(OBJS) 
 	$(OBJDUMP) -S $(B)/kernel > $(B)/kernel.asm
 	$(OBJDUMP) -t $(B)/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $(B)/kernel.sym
@@ -78,6 +77,14 @@ $(O)/%.o: $(S)/%.S
 
 $(O)/%.o: $(S)/%.c
 	$(CC) $(CFLAGS)   -c -o $@ $^
+
+# This line tells the Makefile to use the .d (for dependency) files that we told gcc
+# to generate with -MD. These dependency files contain rules that automatically
+# recompile files if a header changes. This is very useful when we have parameters
+# in a header that we might want to tweak before recompiling. The hyphen in front
+# of include tells make to ignore these files if they don't exist (they get
+# deleted every time we run make clean)
+-include $(OBJS:.o=.d)
 
 # Prevent deletion of intermediate files, e.g. cat.o, after first build, so
 # that disk image changes after first build are persistent until clean.  More
