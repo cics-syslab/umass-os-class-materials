@@ -75,6 +75,14 @@ $(O)/%.o: $(S)/%.S
 $(O)/%.o: $(S)/%.c
 	$(CC) $(CFLAGS)   -c -o $@ $^
 
+# This line tells the Makefile to use the .d (for dependency) files that we told gcc
+# to generate with -MD. These dependency files contain rules that automatically
+# recompile files if a header changes. This is very useful when we have parameters
+# in a header that we might want to tweak before recompiling. The hyphen in front
+# of include tells make to ignore these files if they don't exist (they get
+# deleted every time we run make clean)
+-include $(OBJS:.o=.d)
+
 # Prevent deletion of intermediate files, e.g. cat.o, after first build, so
 # that disk image changes after first build are persistent until clean.  More
 # details:
