@@ -64,7 +64,7 @@ $(B)/kernel: $(OBJS) $(SC)/kernel.ld
 # The gap between cflags and -c is used to match the gap in
 # the implict rules for .c files, it is purely aesthetic.
 $(O)/%.o: $(S)/%.S
-	$(CC) $(CFLAGS)   -c -o $@ $^
+	$(CC) $(CFLAGS)   -c -o $@ $<
 
 # This line tells the Makefile to use the .d (for dependency) files that we told gcc
 # to generate with -MD. These dependency files contain rules that automatically
