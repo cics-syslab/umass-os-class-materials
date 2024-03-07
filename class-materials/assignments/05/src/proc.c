@@ -4,10 +4,8 @@
 #include "riscv.h"
 #include "util.h"
 #include "uart.h"
-
-extern char stack1;
-extern char stack2;
-extern char stack3;
+#include "kernel.ld.h"
+#include "trap.h"
 
 struct proc proc_processes[3];
 
@@ -24,15 +22,23 @@ int proc_curr_proc_id = -1;
 // of user mode, however they still do a good job of showing what is 
 // required to switch between processes with timer interrupts. 
 void proc_init() {
-    proc_processes[0].kernel_context.sp = (uint64) &stack1;
+    proc_processes[0].kernel_stack = (uint64) &kernel_stack1;
+    proc_processes[0].kernel_context.sp = proc_processes[0].kernel_stack;
     proc_processes[0].kernel_context.ra = (uint64) proc_first_schedule;
-    proc_processes[0].entry = main;
-    proc_processes[1].kernel_context.sp = (uint64) &stack2;
+    proc_processes[0].user_context.pc = (uint64) main;
+    proc_processes[0].user_context.sp = (uint64) &user_stack1;
+
+    proc_processes[1].kernel_stack = (uint64) &kernel_stack2;
+    proc_processes[1].kernel_context.sp = proc_processes[1].kernel_stack;
     proc_processes[1].kernel_context.ra = (uint64) proc_first_schedule;
-    proc_processes[1].entry = main2;
-    proc_processes[2].kernel_context.sp = (uint64) &stack3;
+    proc_processes[1].user_context.pc = (uint64) main2;
+    proc_processes[1].user_context.sp = (uint64) &user_stack2;
+
+    proc_processes[2].kernel_stack = (uint64) &kernel_stack3;
+    proc_processes[2].kernel_context.sp = proc_processes[2].kernel_stack;
     proc_processes[2].kernel_context.ra = (uint64) proc_first_schedule;
-    proc_processes[2].entry = main3;
+    proc_processes[2].user_context.pc = (uint64) main3;
+    proc_processes[2].user_context.sp = (uint64) &user_stack3;
 }
 
 // This is the function that gets called from trap_devintr and decides
@@ -63,6 +69,7 @@ void proc_schedule() {
     uart_write('\n');
     uint64 mepc = riscv_r_mepc();
     uint64 mstatus = riscv_r_mstatus();
+    uint64 mscratch = riscv_r_mscratch();
     switch_to_process(&proc_processes[proc_curr_proc_id].kernel_context, &proc_processes[next_pid].kernel_context);
     // A naive solution to this might use next_pid as calculated above, but remember
     // that by the time we reach this line, we have switched to a new stack so the
@@ -73,6 +80,7 @@ void proc_schedule() {
     proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;;
     riscv_w_mepc(mepc);
     riscv_w_mstatus(mstatus);
+    riscv_w_mscratch(mscratch);
 }
 
 // Because machinevec pushes and then pops all registers on the stack,
@@ -83,12 +91,7 @@ void proc_schedule() {
 // we're already on the new procs stack. 
 void proc_first_schedule() {
     proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;
-    // Set up mret to return to the beginning of the user process
-    riscv_w_mepc((uint64) proc_processes[proc_curr_proc_id].entry);
-    // Set up mret to return into machine mode
-    uint64 mstatus = riscv_r_mstatus();
-    mstatus &= ~RISCV_MSTATUS_MPP_MASK;
-    mstatus |= RISCV_MSTATUS_MPP_M;
-    riscv_w_mstatus(mstatus);
-    asm("mret");
+    // set mscratch to hold pointer to proc struct
+    riscv_w_mscratch((uint64) &proc_processes[proc_curr_proc_id].user_context);
+    trap_usertrap_return();
 }

@@ -21,3 +21,8 @@ int util_strcmp(char *str1, char *str2) {
     
     return c1 - c2;
 }
+
+void util_panic(char* buf) {
+    util_print_buf(buf);
+    while (1);
+}

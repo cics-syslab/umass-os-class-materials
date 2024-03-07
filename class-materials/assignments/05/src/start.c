@@ -16,6 +16,10 @@ void start() {
 
     // enable machine-mode interrupts.
     riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);     // globally enable machine mode interrupts
+    // Enable RWX on all S/U mode accesses
+    riscv_w_pmpcfg0(0xf);
+    // For the range 0...2^55 (which covers the entire range of memory available to us in SV39)
+    riscv_w_pmpaddr0(0x3fffffffffffffull);
 
     util_print_buf("Switching to proc A\n");
     // proc_first_schedule expects to enter on the new processes stack

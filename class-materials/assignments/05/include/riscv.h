@@ -16,6 +16,7 @@ static inline uint64 riscv_r_mhartid() {
 #define RISCV_MSTATUS_MPP_S (1L << 11)
 #define RISCV_MSTATUS_MPP_U (0L << 11)
 #define RISCV_MSTATUS_MIE (1L << 3)    // machine-mode interrupt enable.
+#define RISCV_MSTATUS_MPIE (1L << 7)
 
 static inline uint64 riscv_r_mstatus() {
   uint64 x;
@@ -104,6 +105,12 @@ static inline void riscv_w_satp(uint64 x) {
 static inline uint64 riscv_r_satp() {
   uint64 x;
   asm volatile("csrr %0, satp" : "=r" (x) );
+  return x;
+}
+
+static inline uint64 riscv_r_mscratch() {
+  uint64 x;
+  asm volatile("csrr %0, mscratch" : "=r" (x));
   return x;
 }
 

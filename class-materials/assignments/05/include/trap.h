@@ -3,4 +3,6 @@
 #include "riscv.h"
 
 void trap_inithart();
-int trap_devintr();
+void trap_kernel();
+void trap_usertrap();
+void trap_usertrap_return();

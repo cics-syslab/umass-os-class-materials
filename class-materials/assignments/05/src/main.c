@@ -82,28 +82,31 @@ void main_handle_input(char c) {
 // it enough that we can see what's going on. (N.B. we're back to using a
 // ton of CPU without the wfi loop, but hey at least we're printing
 // something.)
+char out = 'A';
 void main() {
   // main_handle_input is only called when a key is typed, so we
   // need to print it here the first time before the user has typed
   // anything.
-  main_print_prompt("> ");
+  main_print_prompt();
   while (1) {
     for (int i = 0; i < 500000000; i++);
-    uart_write('A');
+    uart_write(out);
   }
 }
 
+char out2 = 'B';
 // We make a few additional functions to run in different processes.
 void main2() {
   while (1) {
     for (int i = 0; i < 500000000; i++);
-    uart_write('B');
+    uart_write(out2);
   }
 }
 
+char out3 = 'C';
 void main3() {
   while (1) {
     for (int i = 0; i < 500000000; i++);
-    uart_write('C');
+    uart_write(out3);
   }
 }
