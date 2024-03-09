@@ -7,5 +7,6 @@ set riscv use-compressed-breakpoints yes
 set show-compact-regs on
 set emulate off
 set dereference-limit 0  
+set kernel-vmmap none
 b entry
 c
