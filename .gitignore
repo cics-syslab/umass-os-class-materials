@@ -3,6 +3,7 @@
 .DS_Store
 .gdbinit
 .gdb_history
-class-materials/notes/*.pdf
-class-materials/lessons/*.pdf
-assignments-template/
+/class-materials/notes/*.pdf
+/class-materials/lessons/*.pdf
+/class-materials/assignments-complete/*/build/
+/class-materials/assignments-template/
