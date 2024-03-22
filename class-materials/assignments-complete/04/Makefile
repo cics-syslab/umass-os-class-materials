@@ -116,8 +116,8 @@ qemu-gdb: $(B)/kernel .gdbinit
 .PHONY: clean .gdbinit
 
 clean: 
-	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	$(O)/*.o $(O)/*.d $(B)/*.asm $(B)/*.sym $(B)/kernel .gdbinit 
+	rm -rf build/ .gdbinit 
+	mkdir -p $(O) $(B)
 
 .gdbinit:
 ifdef DRIVERMODE
