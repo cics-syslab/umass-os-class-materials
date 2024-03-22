@@ -8,6 +8,9 @@ OBJS = \
 	$O/main.o \
 	$O/start.o \
 	$O/util.o \
+	$O/plic.o \
+	$O/trap.o \
+	$O/machinevec.o \
 	$O/uart.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -86,8 +89,10 @@ $(O)/%.o: $(S)/%.c
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
+ifndef GDBPORT
 # try to generate a unique GDB port
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)
+endif
 # QEMU's gdb stub command line changed in 0.11
 QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
@@ -99,17 +104,17 @@ endif
 QEMUOPTS = -machine virt -bios none -kernel $(B)/kernel -m 128M -smp $(CPUS) -nographic
 
 qemu: $(B)/kernel
-	$(QEMU) $(QEMUOPTS)
+	$(QEMU) $(QEMUOPTS) $(QEMUEXTRA)
 
 qemu-gdb: $(B)/kernel .gdbinit
 	@echo "*** Now run 'gdb' in another window." 1>&2
-	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
+	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB) $(QEMUEXTRA)
 
 .PHONY: clean .gdbinit
 
 clean: 
-	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	$(O)/*.o $(O)/*.d $(B)/*.asm $(B)/*.sym $(B)/kernel .gdbinit 
+	rm -rf build/ .gdbinit 
+	mkdir -p $(O) $(B)
 
 .gdbinit:
 ifdef DRIVERMODE

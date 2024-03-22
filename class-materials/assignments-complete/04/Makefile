@@ -11,7 +11,10 @@ OBJS = \
 	$O/plic.o \
 	$O/trap.o \
 	$O/machinevec.o \
-	$O/uart.o
+	$O/uart.o \
+	$O/timer.o \
+	$O/proc.o \
+	$O/switch.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -113,8 +116,8 @@ qemu-gdb: $(B)/kernel .gdbinit
 .PHONY: clean .gdbinit
 
 clean: 
-	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	$(O)/*.o $(O)/*.d $(B)/*.asm $(B)/*.sym $(B)/kernel .gdbinit 
+	rm -rf build/ .gdbinit 
+	mkdir -p $(O) $(B)
 
 .gdbinit:
 ifdef DRIVERMODE

@@ -5,17 +5,7 @@ B = build/bin
 
 OBJS = \
 	$O/entry.o \
-	$O/main.o \
-	$O/start.o \
-	$O/util.o \
-	$O/plic.o \
-	$O/trap.o \
-	$O/machinevec.o \
-	$O/uart.o \
-	$O/timer.o \
-	$O/proc.o \
-	$O/switch.o \
-	$O/uservec.o
+	$O/uart.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -51,7 +41,7 @@ CFLAGS += -march=rv64g -mabi=lp64d
 CFLAGS += -MD
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
-CFLAGS += -I./include
+CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -76,9 +66,6 @@ $(B)/kernel: $(OBJS) $(SC)/kernel.ld
 $(O)/%.o: $(S)/%.S
 	$(CC) $(CFLAGS)   -c -o $@ $<
 
-$(O)/%.o: $(S)/%.c
-	$(CC) $(CFLAGS)   -c -o $@ $<
-
 # This line tells the Makefile to use the .d (for dependency) files that we told gcc
 # to generate with -MD. These dependency files contain rules that automatically
 # recompile files if a header changes. This is very useful when we have parameters
@@ -93,10 +80,8 @@ $(O)/%.o: $(S)/%.c
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
-ifndef GDBPORT
 # try to generate a unique GDB port
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)
-endif
 # QEMU's gdb stub command line changed in 0.11
 QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
@@ -108,17 +93,17 @@ endif
 QEMUOPTS = -machine virt -bios none -kernel $(B)/kernel -m 128M -smp $(CPUS) -nographic
 
 qemu: $(B)/kernel
-	$(QEMU) $(QEMUOPTS) $(QEMUEXTRA)
+	$(QEMU) $(QEMUOPTS)
 
 qemu-gdb: $(B)/kernel .gdbinit
 	@echo "*** Now run 'gdb' in another window." 1>&2
-	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB) $(QEMUEXTRA)
+	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
 .PHONY: clean .gdbinit
 
 clean: 
-	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	$(O)/*.o $(O)/*.d $(B)/*.asm $(B)/*.sym $(B)/kernel .gdbinit 
+	rm -rf build/ .gdbinit 
+	mkdir -p $(O) $(B)
 
 .gdbinit:
 ifdef DRIVERMODE

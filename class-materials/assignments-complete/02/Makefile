@@ -5,6 +5,9 @@ B = build/bin
 
 OBJS = \
 	$O/entry.o \
+	$O/main.o \
+	$O/start.o \
+	$O/util.o \
 	$O/uart.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -41,7 +44,7 @@ CFLAGS += -march=rv64g -mabi=lp64d
 CFLAGS += -MD
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
-CFLAGS += -I.
+CFLAGS += -I./include
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -64,6 +67,9 @@ $(B)/kernel: $(OBJS) $(SC)/kernel.ld
 # The gap between cflags and -c is used to match the gap in
 # the implict rules for .c files, it is purely aesthetic.
 $(O)/%.o: $(S)/%.S
+	$(CC) $(CFLAGS)   -c -o $@ $<
+
+$(O)/%.o: $(S)/%.c
 	$(CC) $(CFLAGS)   -c -o $@ $<
 
 # This line tells the Makefile to use the .d (for dependency) files that we told gcc
@@ -102,8 +108,8 @@ qemu-gdb: $(B)/kernel .gdbinit
 .PHONY: clean .gdbinit
 
 clean: 
-	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	$(O)/*.o $(O)/*.d $(B)/*.asm $(B)/*.sym $(B)/kernel .gdbinit 
+	rm -rf build/ .gdbinit 
+	mkdir -p $(O) $(B)
 
 .gdbinit:
 ifdef DRIVERMODE

@@ -5,3 +5,6 @@ docker-build:
 
 docker-run:
 	docker run -it --rm -v ./xv6-riscv:/umass-os -p 5001:5000 $(CONTAINER)
+
+# Required target for the template making script
+clean:
