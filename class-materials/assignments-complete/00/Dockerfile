@@ -26,4 +26,6 @@ COPY --chown=root docker-entry.sh /docker-entry.sh
 RUN chmod u+x /entry-point.sh
 
 WORKDIR /umass-os
+# BEGIN DELETE BLOCK
 ENTRYPOINT [ "/bin/bash", "/entry-point.sh" ]
+# END DELETE BLOCK
