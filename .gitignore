@@ -1,7 +1,6 @@
 .idea/
 .vscode/
 .DS_Store
-**/build
 .gdbinit
 .gdb_history
 class-materials/notes/*.pdf
