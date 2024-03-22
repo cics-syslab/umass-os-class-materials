@@ -1,9 +1,7 @@
 templates:
 	# Remove previous templates
-	rm -r assignments-template/
+	rm -rf assignments-template
 	mkdir assignments-template
-	# Put the place holder gitignore back
-	echo '*\n!.gitignore' > assignments-template/.gitignore
 	# Clean up any files that might contain hints
 	for dir in assignments-complete/*/; do make --directory=$$dir clean; done
 	# Copy over files
