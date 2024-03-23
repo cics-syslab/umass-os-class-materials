@@ -26,6 +26,15 @@ COPY --chown=root docker-entry.sh /docker-entry.sh
 RUN chmod u+x /entry-point.sh
 
 WORKDIR /umass-os
+
+# This is a dockerfile as discussed in class. Currently it launches bash
+# when it starts, which means that in order to boot into xv6, we have to
+# run a few commands. This is far too much work. We will fix that by 
+# replacing the entrypoint below with our own script.
+#
+# TODO: Replace the bash entry point with bash running docker-entry.sh
+#
+ENTRYPOINT [ "/bin/bash" ]
 # BEGIN DELETE BLOCK
-ENTRYPOINT [ "/bin/bash", "/entry-point.sh" ]
+# ENTRYPOINT [ "/bin/bash", "/entry-point.sh" ]
 # END DELETE BLOCK
