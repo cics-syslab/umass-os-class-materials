@@ -6,4 +6,5 @@
 /class-materials/notes/*.pdf
 /class-materials/lessons/*.pdf
 /class-materials/assignments-complete/*/build/
+/class-materials/assignments-complete/00/xv6-riscv
 /class-materials/assignments-template/
