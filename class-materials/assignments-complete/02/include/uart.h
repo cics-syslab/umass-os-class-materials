@@ -1,3 +1,4 @@
+// From the qemu documentation for the virt board
 #define UART_ADDRESS 0x10000000
 
 // the UART control registers are memory-mapped

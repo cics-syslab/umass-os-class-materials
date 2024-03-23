@@ -1,5 +1,5 @@
+/* BEGIN DELETE BLOCK */
 #include "uart.h"
-
 void uart_init() {
   // disable interrupts.
   uart_write_reg(UART_IER, UART_IER_GLOBAL_DISABLE);
@@ -39,3 +39,4 @@ char uart_read() {
   uart_wait_for_read();
   return uart_get_c();
 }
+/* END DELETE BLOCK */

@@ -22,17 +22,6 @@ entry:
 	*/
 	la sp, stack0
 	/*
-	Reserve space on the stack for the most recent (printable)
-	character read in. Riscv calling convention says the stack
-	must be 16 byte aligned. stack0 is aligned by the linker,
-	we are responsible for aligning it during runtime.
-	*/
-	addi sp, sp, -16
-	/*
-	Always initialize variables!
-	*/
-	sb zero, 0(sp)
-	/*
 	Once the C stack is set up, we jump to a C routine to handle the
 	rest of the OS operation. You can still call the assembly functions
 	you already wrote, but for the rest of this course you will mostly
