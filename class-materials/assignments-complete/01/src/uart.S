@@ -1,4 +1,5 @@
 .section .text
+/* TODO: Expose uart_init, uart_read, uart_write, and uart_print_prompt */
 /* BEGIN DELETE BLOCK */
 .global uart_init, uart_read, uart_write, uart_print_prompt
 /* END DELETE BLOCK */
@@ -57,6 +58,7 @@ paramters:
 return: 
 */
 uart_wait_for_write:
+/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -102,6 +104,7 @@ paramters:
 return: 
 */
 uart_write:
+/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -144,6 +147,7 @@ paramters:
 return: 
 */
 uart_put_c:
+/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -184,6 +188,7 @@ paramters:
 return: 
 */
 uart_print_prompt:
+/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)

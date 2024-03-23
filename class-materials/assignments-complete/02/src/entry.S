@@ -35,10 +35,12 @@ entry:
 	/*
 	Once the C stack is set up, we jump to a C routine to handle the
 	rest of the OS operation. You can still call the assembly functions
-	you already wrote, but the rest of this course you will mostly
+	you already wrote, but for the rest of this course you will mostly
 	be writing in C.
 	*/
+/* BEGIN DELETE BLOCK */
 	call start
+/* END DELETE BLOCK */
 
 /*
 This is an endless spin 🤔? What's the point of that. Remember

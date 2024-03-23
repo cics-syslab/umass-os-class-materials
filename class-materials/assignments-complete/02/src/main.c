@@ -1,6 +1,7 @@
 #include "uart.h"
 #include "util.h"
 
+/* BEGIN DELETE BLOCK */
 #define MAX_CMD_LEN 16
 
 char main_cmd_buf[MAX_CMD_LEN] = { 0 };
@@ -11,8 +12,10 @@ void main_print_prompt() {
     uart_write('>');
     uart_write(' ');
 }
+/* BEGIN DELETE BLOCK */
 
 void main() {
+/* BEGIN DELETE BLOCK */
     main_print_prompt();
     while (1) {
         main_input = uart_read();
@@ -72,4 +75,5 @@ void main() {
             uart_write(main_input);
         }
     }
+/* BEGIN DELETE BLOCK */
 }

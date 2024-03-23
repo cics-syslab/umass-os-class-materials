@@ -22,8 +22,8 @@ WORKDIR /opt/pwndbg
 RUN ./setup.sh
 
 # Copy tmux script in
-COPY --chown=root docker-entry.sh /docker-entry.sh
-RUN chmod u+x /entry-point.sh
+COPY --chown=root entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
 
 WORKDIR /umass-os
 
@@ -32,8 +32,8 @@ WORKDIR /umass-os
 # run a few commands. This is far too much work. We will fix that by 
 # replacing the entrypoint below with our own script.
 #
-# TODO: Set the entry point to bash running docker-entry.sh
+# TODO: Set the entry point to bash running entrypoint.sh
 #
 # BEGIN DELETE BLOCK
-ENTRYPOINT [ "/bin/bash", "/entry-point.sh" ]
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 # END DELETE BLOCK
