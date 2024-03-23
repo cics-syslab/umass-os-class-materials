@@ -1,6 +1,10 @@
-templates:
+.PHONY: templates-clean
+
+templates-clean:
 	# Remove previous templates
 	rm -rf assignments-template
+
+templates: templates-clean
 	mkdir assignments-template
 	# Clean up any files that might contain hints
 	for dir in assignments-complete/*/; do make --directory=$$dir clean; done
