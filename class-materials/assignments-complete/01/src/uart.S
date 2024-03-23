@@ -1,5 +1,7 @@
 .section .text
+/* BEGIN DELETE BLOCK */
 .global uart_init, uart_read, uart_write, uart_print_prompt
+/* END DELETE BLOCK */
 /*
 Always add documentation (especially in assembly).
 Initialize the UART, which is placed at 0x10000000 by qemu.
@@ -47,7 +49,6 @@ uart_init:
 	addi sp, sp, 16		# Epilogue: restore the previous frame
 	ret					# Epilogue: return to caller
 
-
 /*
 Wait until the uart is ready to receive a byte.
 Once there is, return.
@@ -56,6 +57,7 @@ paramters:
 return: 
 */
 uart_wait_for_write:
+/* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -68,7 +70,7 @@ uart_wait_for_write:
 	ld s0, 0(sp)
 	addi sp, sp, 16
 	ret									# End epilogue
-
+/* END DELETE BLOCK */
 
 /*
 Wait until the uart has a byte to read.
@@ -91,7 +93,6 @@ uart_wait_for_read:
 	addi sp, sp, 16
 	ret									# End prologue
 
-
 /*
 Wait until the uart has room for a byte.
 Once there is, write the passed in byte to the uart.
@@ -101,6 +102,7 @@ paramters:
 return: 
 */
 uart_write:
+/* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -111,7 +113,7 @@ uart_write:
 	ld s0, 0(sp)
 	addi sp, sp, 16
 	ret									# End prologue
-
+/* END DELETE BLOCK */
 
 /*
 Wait until the uart has a byte to read.
@@ -142,6 +144,7 @@ paramters:
 return: 
 */
 uart_put_c:
+/* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -152,7 +155,7 @@ uart_put_c:
 	ld s0, 0(sp)
 	addi sp, sp, 16
 	ret									# End epilogue
-
+/* END DELETE BLOCK */
 
 /*
 Read a character from the uart
@@ -181,6 +184,7 @@ paramters:
 return: 
 */
 uart_print_prompt:
+/* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
 	sd fp, 0(sp)
@@ -193,3 +197,4 @@ uart_print_prompt:
 	ld s0, 0(sp)
 	addi sp, sp, 16
 	ret									# End epilogue
+/* END DELETE BLOCK */

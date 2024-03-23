@@ -10,10 +10,6 @@ Make the entry label (memory location) visible to ld.
 This is necessary so it can put entry at 0x80000000.
 */
 .global entry
-/*
-This reserves 4096 bytes in the .bss section, with the label stack0.
-The .bss section will be filled with zeros on program load
-*/
 entry:
 	/*
 	Load the stack pointer into $sp
@@ -43,7 +39,7 @@ _prompt:
 	call uart_print_prompt
 /*
 Here we process input until we get a newline or carriage return.
-Each new non-newline-cariiage-return character goes into
+Each new non-newline-cariage-return character goes into
 the variable we made on the stack above, overwriting each other.
 It also gets printed back to the screen so the user can see
 what they're typing. Who knew such a basic part of the computer

@@ -12,11 +12,12 @@ SECTIONS
   .text : {
     *(.text)
   }
-
+/* BEGIN DELETE BLOCK */
   .stack : {
     . = ALIGN(16);
     _stack_start = .;
     . += 0x1000;
     PROVIDE(stack0 = .);
   }
+/* END DELETE BLOCK */
 }
