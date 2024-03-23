@@ -2,6 +2,7 @@ O = build/obj
 S = src
 SC = scripts
 B = build/bin
+CONTAINER=umass-os:pwndbg
 
 OBJS = \
 	$O/entry.o \
@@ -122,3 +123,9 @@ ifdef DRIVERMODE
 else
 	sed "s/:1234/:$(GDBPORT)/" < $(SC)/.gdbinit.tmpl-riscv > $@
 endif
+
+docker-build:
+	docker build --pull --rm -f ./Dockerfile -t $(CONTAINER) . 
+
+docker-run:
+	docker run -it --rm -v ./:/umass-os -p 5001:5000 $(CONTAINER)

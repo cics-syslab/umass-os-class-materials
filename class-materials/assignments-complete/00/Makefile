@@ -8,3 +8,9 @@ docker-run:
 
 # Required target for the template making script
 clean:
+	rm -rf xv6-riscv
+# BEGIN DELETE BLOCK
+# Just for convenience, don't include in the student's copy
+clone-xv6:
+	git clone https://github.com/mit-pdos/xv6-riscv.git
+# END DELETE BLOCK
