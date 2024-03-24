@@ -1,4 +1,4 @@
-.PHONY: templates-clean
+.PHONY: templates template-zips
 
 templates-clean:
 	# Remove previous templates
@@ -15,3 +15,12 @@ templates: templates-clean
 	# delete the empty single quotes to run with GNU sed
 	files=$$(grep -rl "BEGIN DELETE BLOCK" assignments-template); \
 	for file in $$files; do sed -i '' -r '/(\/\/|#|\/\*) BEGIN DELETE BLOCK/,/(\/\/|#|\/\*) END DELETE BLOCK/d' $$file; done
+
+clean: templates-clean template-zips-clean
+
+template-zips: template-zips-clean templates
+	mkdir template-zips
+	for dir in assignments-template/*/; do cd $$dir; zip -r ../../template-zips/$$(basename $$dir).zip .; cd ../..; done
+
+template-zips-clean:
+	rm -rf template-zips
