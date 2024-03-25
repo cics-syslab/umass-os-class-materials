@@ -51,14 +51,14 @@ uart_init:
 	ret					# Epilogue: return to caller
 
 /*
-Wait until the uart is ready to receive a byte.
-Once there is, return.
+TODO:
+Wait until the uart is ready to send a byte.
+Once it is, return.
 
 paramters:
 return: 
 */
 uart_wait_for_write:
-/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -96,6 +96,7 @@ uart_wait_for_read:
 	ret									# End prologue
 
 /*
+TODO:
 Wait until the uart has room for a byte.
 Once there is, write the passed in byte to the uart.
 
@@ -104,7 +105,6 @@ paramters:
 return: 
 */
 uart_write:
-/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -140,6 +140,7 @@ uart_read:
 
 
 /*
+TODO:
 Write a character to the uart
 
 paramters:
@@ -147,7 +148,6 @@ paramters:
 return: 
 */
 uart_put_c:
-/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
@@ -182,13 +182,13 @@ uart_get_c:
 
 
 /*
-Call uart_write twice to print the input prompt.
+TODO: 
+Use uart_write to print your prompt.
 
 paramters:
 return: 
 */
 uart_print_prompt:
-/* TODO */
 /* BEGIN DELETE BLOCK */
 	addi sp, sp, -16					# Begin prologue
 	sd ra, 8(sp)
