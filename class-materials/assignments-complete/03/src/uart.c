@@ -48,7 +48,9 @@ char uart_read() {
 void uart_handle_interrupt() {
     // We got an interrupt! Collect the character(s) the user
     // typed and pass them to the console code in main.c.
+/* BEGIN DELETE BLOCK */
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {
         main_handle_input(uart_get_c());
     }
+/* END DELETE BLOCK */
 }

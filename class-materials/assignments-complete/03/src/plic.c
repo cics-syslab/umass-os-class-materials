@@ -7,13 +7,16 @@
 //
 
 void plic_init() {
+/* BEGIN DELETE BLOCK */
   // set desired IRQ priorities non-zero (zero = disabled).
-  // UARTx_IRQ are the interrupt source numbers, each source gets 4 bytes
+  // UART0_IRQ is the interrupt source number for the uart, each source gets 4 bytes
   *(uint32*)(MEMLAYOUT_PLIC + MEMLAYOUT_UART0_IRQ*4) = 1;
-  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);      
+  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
+/* BEGIN DELETE BLOCK */   
 }
 
 void plic_inithart() {
+/* BEGIN DELETE BLOCK */
   // We hardcode this for now, we only have one hart
   // and one hart must always have id 0
   int hart = 0;
@@ -24,17 +27,22 @@ void plic_inithart() {
 
   // set this hart's M-mode priority threshold to 0.
   *(uint32*)MEMLAYOUT_PLIC_MPRIORITY(hart) = 0;
+/* BEGIN DELETE BLOCK */
 }
 
 // ask the PLIC what interrupt we should serve.
 int plic_claim() {
+/* BEGIN DELETE BLOCK */
   int hart = 0;
   int irq = *(uint32*)MEMLAYOUT_PLIC_MCLAIM(hart);
   return irq;
+/* BEGIN DELETE BLOCK */
 }
 
 // tell the PLIC we've served this IRQ. 
 void plic_complete(int irq) {
+/* BEGIN DELETE BLOCK */
   int hart = 0;
   *(uint32*)MEMLAYOUT_PLIC_MCLAIM(hart) = irq;
+/* BEGIN DELETE BLOCK */
 }

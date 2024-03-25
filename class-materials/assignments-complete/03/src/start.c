@@ -10,7 +10,9 @@ void start() {
     plic_inithart();
     trap_inithart();
     // enable machine-mode interrupts.
+    // TODO: Enable machine mode interrupts in mstatus
+/* BEGIN DELETE BLOCK */
     riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);     // globally enable machine mode interrupts
-
+/* BEGIN DELETE BLOCK */
     main();
 }

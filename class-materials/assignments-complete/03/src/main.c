@@ -21,6 +21,7 @@ void main_print_prompt() {
 // implement threads and multiprocessing this separation will make
 // our lives much easier.
 void main_handle_input(char c) {
+/* BEGIN DELETE BLOCK */
     if (c == MAIN_ASCII_NEW_LINE || c == MAIN_ASCII_CARRIAGE_RETURN) {
         // Insert null terminator in place of newline character,
         // otherwise we might read into old commands in the buffer
@@ -75,6 +76,7 @@ void main_handle_input(char c) {
         // Echo the character back to the console
         uart_write(c);
     }
+/* END DELETE BLOCK */
 }
 
 // All of the input is now handled by the trap, so we have nothing to

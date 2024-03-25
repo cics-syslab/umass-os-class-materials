@@ -9,8 +9,9 @@ docker-run:
 # Required target for the template making script
 clean:
 	rm -rf xv6-riscv
+
+# TODO: Create a rule that uses git to clone the xv6-rsicv repository
 # BEGIN DELETE BLOCK
-# Just for convenience, don't include in the student's copy
 clone-xv6:
 	git clone https://github.com/mit-pdos/xv6-riscv.git
 # END DELETE BLOCK

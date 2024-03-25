@@ -8,8 +8,10 @@
 
 // set up to take exceptions and traps while in the kernel.
 void trap_inithart() {
+/* BEGIN DELETE BLOCK */
   riscv_w_mtvec((uint64) machinevec);
   riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);
+/* END DELETE BLOCK */
 }
 
 // Handle incoming interrupts and exceptions
@@ -21,7 +23,7 @@ int trap_devintr() {
     if (interrupt_cause == RISCV_MCAUSE_MACHINE_EXTERNAL_INTERRUPT) {
       // this is a machine external interrupt, via PLIC.
       // via https://github.com/qemu/qemu/blob/master/target/riscv/cpu_bits.h#L700
-
+/* BEGIN DELETE BLOCK */
       // irq indicates which device interrupted.
       int irq = plic_claim();
 
@@ -33,7 +35,7 @@ int trap_devintr() {
       // now allowed to interrupt again.
       if(irq)
         plic_complete(irq);
-
+/* END DELETE BLOCK */
       return 1;
     }
     // Unknown interrupt type
