@@ -46,8 +46,12 @@ char uart_read() {
 }
 
 void uart_handle_interrupt() {
-    // We got an interrupt! Collect the character(s) the user
-    // typed and pass them to the console code in main.c.
+    // TODO: 
+    // We got an interrupt! How do we handle it? Collect the character(s) the user
+    // typed and pass them to the console code in main.c. Note the character*S*. The UART
+    // only triggers an interrupt once per set of characters received. It is possible
+    // that it could receive multiple characters at once, and only reading in one
+    // would prevent it from interrupting again. 
 /* BEGIN DELETE BLOCK */
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {
         main_handle_input(uart_get_c());
