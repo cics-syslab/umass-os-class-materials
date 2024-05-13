@@ -119,8 +119,11 @@ else
 	sed "s/:1234/:$(GDBPORT)/" < $(SC)/.gdbinit.tmpl-riscv > $@
 endif
 
+# --pull was removed from this rule after discussing with Tim and successfully building without it
+# Previously it appeared that it was required to build the image. If something goes wrong building
+# the image try including --pull.
 docker-build:
-	docker build --pull --rm -f ./Dockerfile -t $(CONTAINER) . 
+	docker build --rm -f ./Dockerfile -t $(CONTAINER) ./scripts
 
 docker-run:
 	docker run -it --rm -v ./:/umass-os -p 5001:5000 $(CONTAINER)

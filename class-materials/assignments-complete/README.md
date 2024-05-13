@@ -36,7 +36,7 @@ In order to create a uniform environment, a dockerfile is provided that comes wi
 
 Additionally, another dockerfile can be found at `class-materials/dockerfiles/Dockerfile-gdbgui` that sets up an environment based around an experimental web-based frontend for GDB. It is slightly trickier to setup and somewhat more brittle, but it is suitable for all assignments. The author believes that having a familiarity with command line debugging is essential to anyone wishing to do serious systems development, therefore this environment is not recommended. It may be provided to students at the instructor's discretion.
 
-Both dockerfiles can be built with `docker build --pull --rm -f <dockerfile> -t <container-name> . ` and ran with `docker run -it --rm -v ./xv6-riscv:/umass-os -p 5001:5000 <container-name>` from the `class-assignmentsalthough the `Makefile` contains rules to build and run them.
+Both dockerfiles can be built with `docker build --rm -f <dockerfile> -t <container-name> . ` and ran with `docker run -it --rm -v ./xv6-riscv:/umass-os -p 5001:5000 <container-name>` from the `class-assignmentsalthough the `Makefile` contains rules to build and run them.
 
 ### Sample Header
 some text
