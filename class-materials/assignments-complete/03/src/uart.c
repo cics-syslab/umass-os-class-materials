@@ -51,7 +51,8 @@ void uart_handle_interrupt() {
     // typed and pass them to the console code in main.c. Note the character*S*. The UART
     // only triggers an interrupt once per set of characters received. It is possible
     // that it could receive multiple characters at once, and only reading in one
-    // would prevent it from interrupting again. 
+    // would prevent it from interrupting again. This is especially common if you type
+    // into the OS while it is paused in GDB. 
 /* BEGIN DELETE BLOCK */
     while (uart_read_reg(UART_LSR) & UART_LSR_RX_READY) {
         main_handle_input(uart_get_c());

@@ -10,7 +10,6 @@ void plic_init() {
   // set desired IRQ priorities non-zero (zero = disabled).
   // UARTx_IRQ are the interrupt source numbers, each source gets 4 bytes
   *(uint32*)(MEMLAYOUT_PLIC + MEMLAYOUT_UART0_IRQ*4) = 1;
-  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
 }
 
 void plic_inithart() {
@@ -24,6 +23,9 @@ void plic_inithart() {
 
   // set this hart's M-mode priority threshold to 0.
   *(uint32*)MEMLAYOUT_PLIC_MPRIORITY(hart) = 0;
+
+  // Enable machine external interrupts
+  riscv_w_mie(riscv_r_mie() | RISCV_MIE_MEIE);
 }
 
 // ask the PLIC what interrupt we should serve.

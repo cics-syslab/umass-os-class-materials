@@ -10,7 +10,6 @@
 void trap_inithart() {
 /* BEGIN DELETE BLOCK */
   riscv_w_mtvec((uint64) machinevec);
-  riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);
 /* END DELETE BLOCK */
 }
 
