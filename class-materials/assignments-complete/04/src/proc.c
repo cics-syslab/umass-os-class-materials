@@ -61,6 +61,7 @@ void proc_schedule() {
         util_print_buf("panic: bad pid");
     }
     uart_write('\n');
+/* BEGIN DELETE BLOCK */
     uint64 mepc = riscv_r_mepc();
     uint64 mstatus = riscv_r_mstatus();
     switch_to_process(&proc_processes[proc_curr_proc_id].kernel_context, &proc_processes[next_pid].kernel_context);
@@ -70,18 +71,21 @@ void proc_schedule() {
     // example once proc 2 switches to proc 0, that proc 0 will hold 1 in next_pid
     // so adding one to it will actually put 2 in proc_curr_id instead of 0 as
     // intended. 
-    proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;;
+    proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;
     riscv_w_mepc(mepc);
     riscv_w_mstatus(mstatus);
+/* END DELETE BLOCK */
 }
 
 // Because machinevec pushes and then pops all registers on the stack,
 // returning into machinevec on our brand new (empty) stacks from
 // a new proc will cause undefined behavior when undefined values 
 // are popped into the registers. So instead, we have all processes
-// set up to return into user land through this function. It assumes that
-// we're already on the new procs stack. 
+// set up to return into user land through this function the first 
+// time they are switched to. It won't attempt to pop things off
+// the stack. It assumes that we're already on the new procs stack. 
 void proc_first_schedule() {
+/* BEGIN DELETE BLOCK */
     proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;
     // Set up mret to return to the beginning of the user process
     riscv_w_mepc((uint64) proc_processes[proc_curr_proc_id].entry);
@@ -91,4 +95,5 @@ void proc_first_schedule() {
     mstatus |= RISCV_MSTATUS_MPP_M;
     riscv_w_mstatus(mstatus);
     asm("mret");
+/* END DELETE BLOCK */
 }

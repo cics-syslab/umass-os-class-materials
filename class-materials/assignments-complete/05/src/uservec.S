@@ -19,7 +19,7 @@ uservec:
     # in supervisor mode
     #
 
-    # mscratch holds the pointer to the proc block
+    # mscratch holds a pointer to proc.kernel_context
     # swap with a0 to get the pointer into a 
     # general pupose register
     csrrw a0, mscratch, a0
@@ -57,14 +57,14 @@ uservec:
     sd t5, 248(a0)
     sd t6, 256(a0)
 
-    # save the user a0 in p->trapframe->a0
+    # save the user a0 in kernel_context->a0
     csrr t0, mscratch
     sd t0, 88(a0)
 
     # restore mscratch
     csrw mscratch, a0
 
-    # initialize kernel stack pointer, from p->trapframe->kernel_sp
+    # initialize kernel stack pointer, from kernel_context->sp
     ld sp, 0(a0)
 
     # jump to usertrap(), which does not return

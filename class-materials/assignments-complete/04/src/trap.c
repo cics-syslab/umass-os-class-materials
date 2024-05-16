@@ -37,12 +37,13 @@ int trap_devintr() {
 
       return 1;
     } else if (interrupt_cause == RISCV_MCAUSE_MACHINE_TIMER_INTERRUPT) {
-
+/* BEGIN DELETE BLOCK */
       // adjust the mtimecmp value to clear the interrupt and schedule the next one
       int id = riscv_r_mhartid();
-      *(uint64 *)MEMLAYOUT_CLINT_MTIMECMP(id) = *(uint64 *)MEMLAYOUT_CLINT_MTIME + PARAMETERS_INTERRUPT_INTERVAL;
+      *(uint64 *) MEMLAYOUT_CLINT_MTIMECMP(id) = *(uint64 *) MEMLAYOUT_CLINT_MTIME + PARAMETERS_INTERRUPT_INTERVAL;
       proc_schedule();
       return 1;
+/* END DELETE BLOCK */
     }
   } 
   // Unknown interrupt or it is an exception

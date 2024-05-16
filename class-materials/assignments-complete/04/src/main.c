@@ -86,7 +86,7 @@ void main() {
   // main_handle_input is only called when a key is typed, so we
   // need to print it here the first time before the user has typed
   // anything.
-  main_print_prompt("> ");
+  main_print_prompt();
   while (1) {
     for (int i = 0; i < 500000000; i++);
     uart_write('A');

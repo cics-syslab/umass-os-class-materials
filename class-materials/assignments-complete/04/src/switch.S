@@ -20,7 +20,7 @@ switch_to_process:
     sd s9, 88(a0)
     sd s10, 96(a0)
     sd s11, 104(a0)
-
+/* BEGIN DELETE BLOCK */
     ld ra, 0(a1)
     ld sp, 8(a1)
     ld s0, 16(a1)
@@ -35,5 +35,5 @@ switch_to_process:
     ld s9, 88(a1)
     ld s10, 96(a1)
     ld s11, 104(a1)
-
+/* END DELETE BLOCK */
     ret
