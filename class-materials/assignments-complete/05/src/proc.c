@@ -22,20 +22,17 @@ int proc_curr_proc_id = -1;
 // of user mode, however they still do a good job of showing what is 
 // required to switch between processes with timer interrupts. 
 void proc_init() {
-    proc_processes[0].kernel_stack = (uint64) &kernel_stack1;
-    proc_processes[0].kernel_context.sp = proc_processes[0].kernel_stack;
+    proc_processes[0].kernel_context.sp = (uint64) &kernel_stack1;
     proc_processes[0].kernel_context.ra = (uint64) proc_first_schedule;
     proc_processes[0].user_context.pc = (uint64) main;
     proc_processes[0].user_context.sp = (uint64) &user_stack1;
 
-    proc_processes[1].kernel_stack = (uint64) &kernel_stack2;
-    proc_processes[1].kernel_context.sp = proc_processes[1].kernel_stack;
+    proc_processes[1].kernel_context.sp = (uint64) &kernel_stack2;
     proc_processes[1].kernel_context.ra = (uint64) proc_first_schedule;
     proc_processes[1].user_context.pc = (uint64) main2;
     proc_processes[1].user_context.sp = (uint64) &user_stack2;
 
-    proc_processes[2].kernel_stack = (uint64) &kernel_stack3;
-    proc_processes[2].kernel_context.sp = proc_processes[2].kernel_stack;
+    proc_processes[2].kernel_context.sp = (uint64) &kernel_stack3;
     proc_processes[2].kernel_context.ra = (uint64) proc_first_schedule;
     proc_processes[2].user_context.pc = (uint64) main3;
     proc_processes[2].user_context.sp = (uint64) &user_stack3;
@@ -77,7 +74,7 @@ void proc_schedule() {
     // example once proc 2 switches to proc 0, that proc 0 will hold 1 in next_pid
     // so adding one to it will actually put 2 in proc_curr_id instead of 0 as
     // intended. 
-    proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;;
+    proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;
     riscv_w_mepc(mepc);
     riscv_w_mstatus(mstatus);
     riscv_w_mscratch(mscratch);
@@ -93,5 +90,7 @@ void proc_first_schedule() {
     proc_curr_proc_id = (proc_curr_proc_id + 1) % 3;
     // set mscratch to hold pointer to proc struct
     riscv_w_mscratch((uint64) &proc_processes[proc_curr_proc_id].user_context);
+/* BEGIN DELETE BLOCK */
     trap_usertrap_return();
+/* END DELETE BLOCK */
 }

@@ -75,12 +75,14 @@ void trap_kerneltrap() {
 }
 
 void trap_usertrap() {
+/* BEGIN DELETE BLOCK */
   int reason = trap_get_reason();
 
   if((riscv_r_mstatus() & RISCV_MSTATUS_MPP_MASK) != 0) util_panic("panic: trap_usertrap");
 
   // send interrupts and exceptions to trap_kerneltrap() (via machinevec),
-  // since we're now in the kernel.
+  // since we're now in the kernel. The kernel stack was restored in
+  // uservec.
   riscv_w_mtvec((uint64) machinevec);
 
   struct proc *p = &proc_processes[proc_curr_proc_id];
@@ -91,13 +93,17 @@ void trap_usertrap() {
   trap_handle_trap(reason);
 
   trap_usertrap_return();
+/* END DELETE BLOCK */
 }
 
 void trap_usertrap_return() {
+/* BEGIN DELETE BLOCK */
   struct proc *p = &proc_processes[proc_curr_proc_id];
   // we're about to switch the destination of traps from
   // kerneltrap() to usertrap(), so turn off interrupts until
   // we're back in user space, where usertrap() is correct.
+  // Note that we use mstatus.mpie (manually set below) to 
+  // reenable machine interrupts once we mret to user mode.
   riscv_intr_off();
 
   // send syscalls, interrupts, and exceptions to uservec in uservec.S
@@ -105,7 +111,7 @@ void trap_usertrap_return() {
 
   // set up trapframe values that uservec will need when
   // the process next traps into the kernel.
-  p->user_context.kernel_sp = p->kernel_stack; // process's kernel stack
+  p->user_context.kernel_sp = p->kernel_context.sp; // process's kernel stack
 
   // set up the registers that trampoline.S's sret will use
   // to get to user space.
@@ -114,7 +120,7 @@ void trap_usertrap_return() {
   unsigned long x = riscv_r_mstatus();
   x &= ~RISCV_MSTATUS_MPP_MASK; // clear MPP
   x |= RISCV_MSTATUS_MPP_U;     // set MPP to user mode
-  x |= RISCV_MSTATUS_MPIE;      // Renable machine interrupts when we return 
+  x |= RISCV_MSTATUS_MPIE;      // Renable machine interrupts when we return to user mode
   riscv_w_mstatus(x);
 
   // set S Exception Program Counter to the saved user pc.
@@ -122,4 +128,5 @@ void trap_usertrap_return() {
 
   // Does not return
   uservec_ret();
+/* END DELETE BLOCK */
 }

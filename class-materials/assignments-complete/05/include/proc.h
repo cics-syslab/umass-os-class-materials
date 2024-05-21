@@ -12,9 +12,14 @@
 // ra so that we can control where a process returns to. This is useful to make 
 // a special return path for functions the first time they are run.
 struct proc_kernel_context {
+  // Not strictly necessary to save this as it is caller
+  // saved, but it is useful to be able to control the 
+  // function that a process will enter when it is
+  // switched to.
   uint64 ra;
 
-  // callee-saved
+  // callee-saved, these must be saved because the C code
+  // won't save them before calling switch_to_process
   uint64 sp;
   uint64 s0;
   uint64 s1;

@@ -1,22 +1,15 @@
-        #
-        # low-level code to handle traps from user space into
-        # the kernel, and returns from kernel to user.
-        #
-        # the kernel maps the page holding this code
-        # at the same virtual address (TRAMPOLINE)
-        # in user and kernel space so that it continues
-        # to work when it switches page tables.
-        # kernel.ld causes this code to start at 
-        # a page boundary.
-        #
+#
+# low-level code to handle traps from user space into
+# the kernel, and returns from kernel to user.
+#
 
 .align 4
 .globl uservec
 uservec:    
 	#
-    # trap_usertrap_return sets stvec to point here, so
+    # trap_usertrap_return sets mtvec to point here, so
     # traps from user space start here,
-    # in supervisor mode
+    # in machine mode
     #
 
     # mscratch holds a pointer to proc.kernel_context
@@ -64,7 +57,7 @@ uservec:
     # restore mscratch
     csrw mscratch, a0
 
-    # initialize kernel stack pointer, from kernel_context->sp
+    # initialize kernel stack pointer, from user_context->kernel_sp
     ld sp, 0(a0)
 
     # jump to usertrap(), which does not return
@@ -72,10 +65,34 @@ uservec:
 
 .globl uservec_ret
 uservec_ret:
-    # mscratch holds the pointer to the proc block
-    # swap with a0 to get the pointer into a 
-    # general pupose register
+    # mscratch holds a pointer to proc.kernel_context
+    # We don't need to swap with mscratch as above
+    # because we are exiting kernel mode and all current
+    # registers can be junked. The only important part
+    # is that the user state is restored properly.
+    # Kernel context is not preserved across.
+    # Note that this preserves mscratch, so we don't
+    # have to restore it after loading the registers.
     csrr a0, mscratch
+
+    # Note that we don't save the kernel sp at this point.
+    # This may seem a little counterintuitive because the
+    # switching code relies on having certain values on the
+    # stack, right? That is only true while it is in kernel 
+    # mode. Recall that switching always happens in kernel
+    # mode, so a process that has been saved in the kernel
+    # and is waiting to be run is always in kernel mode.
+    # The kernel context will save the kernel sp while in 
+    # kernel mode so that when it is switched back to, it
+    # can access the stack values it relies on. If we are 
+    # reaching this point, then the process must be about 
+    # to run (in user mode), therefore we don't need to 
+    # preserve the kernel stack position and can safely 
+    # junk the kernel context. The next time we enter kernel
+    # mode we will start at the first address on the kernel
+    # stack (highest address) and the switching code will 
+    # save our kernel stack pointer when we call
+    # switch_to_process.
 
     # restore all but a0 from TRAPFRAME
     ld ra, 16(a0)
@@ -110,7 +127,7 @@ uservec_ret:
     ld t5, 248(a0)
     ld t6, 256(a0)
 
-    # restore user a0
+    # restore user a0 last, mscratch is untouched
     ld a0, 88(a0)
     
     # return to user mode and user pc.
