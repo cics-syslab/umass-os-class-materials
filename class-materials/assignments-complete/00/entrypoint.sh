@@ -7,9 +7,10 @@
 # 2. Splits the tmux window, running `gdb-multiarch` in the new pane
 # 3. Attaches to the session
 #
-# Step 2 may be more difficult than it sounds. If `make qemu-gdb` takes too long to compile
-# The gdb-multiach will fail to attach to the running qemu process. How could you 
-# ensure that the kernel is compiled before starting qmeu-gdb?
+# Step 2 may be more difficult than it sounds because of a race condition. 
+# If `make qemu-gdb` takes too long to compile, the gdb-multiach will fail 
+# to attach to the running qemu process. How could you ensure that the 
+# kernel is compiled before starting qmeu-gdb?
 # BEGIN DELETE BLOCK
 session="umass-os"
 

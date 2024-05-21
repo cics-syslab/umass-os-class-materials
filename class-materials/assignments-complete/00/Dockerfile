@@ -32,7 +32,8 @@ WORKDIR /umass-os
 # run a few commands. This is far too much work. We will fix that by 
 # replacing the entrypoint below with our own script.
 #
-# TODO: Set the entry point to bash running entrypoint.sh
+# TODO: Set the entry point to bash running entrypoint.sh. This should
+# take exactly one line.
 #
 # BEGIN DELETE BLOCK
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
