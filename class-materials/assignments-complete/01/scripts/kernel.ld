@@ -16,7 +16,7 @@ SECTIONS
 TODO:
 Make a section called `.stack`. PROVIDE a symbol called `stack0` to the compiler.
 `stack0` should point to the top (high address) of a 4096 byte region. Remember
-the riscv stack must be 16 byte ALIGNed
+the RISC-V stack must be 16 byte ALIGNed.
 /*
 /* BEGIN DELETE BLOCK */
   .stack : {

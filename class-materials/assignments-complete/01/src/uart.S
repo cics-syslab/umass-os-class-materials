@@ -8,7 +8,9 @@ Always add documentation (especially in assembly).
 Initialize the UART, which is placed at 0x10000000 by qemu.
 
 paramters:
-return: 
+	None
+return:
+	None
 */
 uart_init:
 	/*
@@ -52,11 +54,18 @@ uart_init:
 
 /*
 TODO:
-Wait until the uart is ready to send a byte.
-Once it is, return.
+Loop until the uart is ready to send a byte.
+Once it is, return. It should NOT consume
+the byte in the receive holding register.
+What register holds the status of the UART
+line?
 
-paramters:
+It should follow all RISC-V calling conventions.
+
+paramters: 
+	None
 return: 
+	None
 */
 uart_wait_for_write:
 /* BEGIN DELETE BLOCK */
@@ -79,7 +88,9 @@ Wait until the uart has a byte to read.
 Once there is, return.
 
 paramters:
+	None
 return: 
+	None
 */
 uart_wait_for_read:
 	addi sp, sp, -16					# Begin prologue
@@ -97,12 +108,16 @@ uart_wait_for_read:
 
 /*
 TODO:
-Wait until the uart has room for a byte.
-Once there is, write the passed in byte to the uart.
+Wait until the uart has room for a byte, using
+uart_wait_for_write. Once there is room, write 
+the first argument to the uart using uart_put_c. 
+
+It should follow all RISC-V calling conventions.
 
 paramters:
 	a0: the character to write
 return: 
+	None
 */
 uart_write:
 /* BEGIN DELETE BLOCK */
@@ -123,6 +138,7 @@ Wait until the uart has a byte to read.
 Once there is, read it and return.
 
 paramters:
+	None
 return: 
 	a0: the character read
 */
@@ -141,11 +157,18 @@ uart_read:
 
 /*
 TODO:
-Write a character to the uart
+Write the character in the first parameter to the uart.
+What register can you use to transmit the byte and where
+is it located (what memory address)? Remember the UART 
+register layout and the memory layout of the virt board
+we're running this on with QEMU.
+
+It should follow all RISC-V calling conventions.
 
 paramters:
 	a0: the character to write
 return: 
+	None
 */
 uart_put_c:
 /* BEGIN DELETE BLOCK */
@@ -162,9 +185,12 @@ uart_put_c:
 /* END DELETE BLOCK */
 
 /*
-Read a character from the uart
+Read a character from the uart.
+
+It should follow all RISC-V calling conventions.
 
 paramters:
+	None
 return: 
 	a0: the character read
 */
@@ -183,10 +209,16 @@ uart_get_c:
 
 /*
 TODO: 
-Use uart_write to print your prompt.
+Use uart_write to print your prompt. Your prompt
+can be anything reasonable. Remember that each 
+call to uart_write only writes one byte.
+
+It should follow all RISC-V calling conventions.
 
 paramters:
+	None
 return: 
+	None
 */
 uart_print_prompt:
 /* BEGIN DELETE BLOCK */
