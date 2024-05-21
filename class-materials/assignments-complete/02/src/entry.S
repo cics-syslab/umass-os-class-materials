@@ -22,7 +22,10 @@ entry:
 	*/
 	la sp, stack0
 	/*
-	Once the C stack is set up, we jump to a C routine to handle the
+	TODO:
+	Call `start` from `start.c`.
+	
+	Once the C stack is set up, we can jump to a C routine to handle the
 	rest of the OS operation. You can still call the assembly functions
 	you already wrote, but for the rest of this course you will mostly
 	be writing in C.

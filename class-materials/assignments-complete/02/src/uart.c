@@ -1,4 +1,3 @@
-/* BEGIN DELETE BLOCK */
 #include "uart.h"
 void uart_init() {
   // disable interrupts.
@@ -18,25 +17,42 @@ void uart_init() {
   uart_write_reg(UART_IER, UART_IER_TX_ENABLE | UART_IER_RX_ENABLE);
 }
 
+/*
+TODO:
+Rewrite uart_wait_for_write in C.
+*/
+/* BEGIN DELETE BLOCK */
 void uart_wait_for_write() {
   while (!(uart_read_reg(UART_LSR) & UART_LSR_TX_IDLE));
 }
+/* END DELETE BLOCK */
 
 void uart_wait_for_read() {
   while (!(uart_read_reg(UART_LSR) & UART_LSR_RX_READY));
 }
 
+/*
+TODO:
+Rewrite uart_put_c in C.
+*/
+/* BEGIN DELETE BLOCK */
 void uart_put_c(char c) { uart_write_reg(UART_THR, c); }
+/* END DELETE BLOCK */
 
 char uart_get_c() { return uart_read_reg(UART_RHR); }
 
+/*
+TODO:
+Rewrite uart_write in C.
+*/
+/* BEGIN DELETE BLOCK */
 void uart_write(char c) {
   uart_wait_for_write();
   uart_put_c(c);
 }
+/* END DELETE BLOCK */
 
 char uart_read() {
   uart_wait_for_read();
   return uart_get_c();
 }
-/* END DELETE BLOCK */

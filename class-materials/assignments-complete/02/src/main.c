@@ -1,6 +1,16 @@
 #include "uart.h"
 #include "util.h"
 
+/*
+TODO:
+Declare any global variables you need to implement your shell.
+Remember that all global variables should be prefixed with the
+name of the file they're in.
+
+Declare any helper functions you need to implement your shell.
+Remember that any functions should be prefixed with the name of
+the file they're in.
+*/
 /* BEGIN DELETE BLOCK */
 #define MAX_CMD_LEN 16
 
@@ -12,9 +22,24 @@ void main_print_prompt() {
     uart_write('>');
     uart_write(' ');
 }
-/* BEGIN DELETE BLOCK */
+/* END DELETE BLOCK */
 
 void main() {
+    /* 
+    TODO:
+    Implement a simple shell. It should print a prompt, then accept user input.
+    Every key the user types should be echoed back to the user using the UART.
+    Once they hit the enter key, the current command should be "executed". To
+    keep this shell simple, execution means the shell either prints output 
+    specific to the command for example 'hello' -> 'world' or "Command 'AAA' 
+    not recognized" (AAA should be replaced with the actual command the user 
+    typed) if the command is not recognized. You should implement at least 
+    one command, it can be whatever you want, and have whatever output you
+    want. The shell should also support the backspace key. It should do
+    exactly what you expect, replacing the last character with a blank space
+    and moving the cursor backwards. It should only delete characters the user
+    typed (not the prompt).
+    */
 /* BEGIN DELETE BLOCK */
     main_print_prompt();
     while (1) {
@@ -75,5 +100,5 @@ void main() {
             uart_write(main_input);
         }
     }
-/* BEGIN DELETE BLOCK */
+/* END DELETE BLOCK */
 }
