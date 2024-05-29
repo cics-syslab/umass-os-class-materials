@@ -7,6 +7,9 @@
 #include "util.h"
 
 // set up to take exceptions and traps while in the kernel.
+/*
+TODO: 
+*/
 void trap_inithart() {
 /* BEGIN DELETE BLOCK */
   riscv_w_mtvec((uint64) machinevec);
