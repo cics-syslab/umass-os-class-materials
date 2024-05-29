@@ -2,12 +2,16 @@
 #include "types.h"
 #include "riscv.h"
 
-//
-// the riscv Platform Level Interrupt Controller (PLIC).
-//
+/*
+Functions to work with the PLIC.
+*/
 
 /*
-TODO:
+TODO: Perform one time initialization by setting the interrupt priority for 
+the UART interrupt source to 1. Remember, good code avoids using magic 
+numbers, where could you find a macro for the *UART* IRQ number.
+
+If you don't remember how to do this, go over the RISC-V PLIC documentation.
 */
 void plic_init() {
 /* BEGIN DELETE BLOCK */
@@ -18,7 +22,17 @@ void plic_init() {
 }
 
 /*
-TODO:
+TODO: Perform per hart initialization by enabling M mode interrupts on
+this hart, which is guaranteed to have hartid 0 because it is the only
+one, for the UART interrupt source. The macros in memlayout.h might
+be helpful here.
+
+After that set the M mode priority threshold for this hart to 0 so we
+can receive all interrupts. The macros in memlayout.h might
+be helpful here.
+
+After that enable machine mode external interrupts in the mie register.
+The macros and helper functions in riscv.h might be helpful here.
 */
 void plic_inithart() {
 /* BEGIN DELETE BLOCK */
@@ -39,9 +53,10 @@ void plic_inithart() {
 }
 
 /*
-TODO:
+TODO: Write a function that claims an M mode interrupt for the current
+hart, which is always hart 0, by reading the relevant PLIC register. The
+macros in memlayout.h may be helpful here. Return the IRQ number.
 */
-// ask the PLIC what interrupt we should serve.
 int plic_claim() {
 /* BEGIN DELETE BLOCK */
   int hart = 0;
@@ -50,7 +65,11 @@ int plic_claim() {
 /* BEGIN DELETE BLOCK */
 }
 
-// tell the PLIC we've served this IRQ. 
+/*
+TODO: Write a function that completes an M mode interrupt for the current
+hart, which is always 0, by writing the IRQ in the first parameter to the
+relevant PLIC register. The macros in memlayout.h may be helpful here.
+*/
 void plic_complete(int irq) {
 /* BEGIN DELETE BLOCK */
   int hart = 0;

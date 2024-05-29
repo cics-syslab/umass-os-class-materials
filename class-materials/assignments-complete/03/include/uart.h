@@ -38,6 +38,8 @@
 
 
 #define UART_MAX_CMD_LEN 32
+
+
 void uart_init();
 void uart_write(char c);
 char uart_read();

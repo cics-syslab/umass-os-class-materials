@@ -57,35 +57,27 @@
 //     [VIRT_DRAM] =         { 0x80000000,           0x0 },
 // };
 //
-// This help us understand the layout of the interrupt targets 
+// This help us understand the layout of the interrupt *targets* (not sources) 
 // for the plic.
 // https://github.com/qemu/qemu/blob/master/hw/intc/sifive_plic.c#L292
-// In short, the targets are arrange according to this pattern
+// In short, the targets are arranged according to this pattern
 //      Interrupt targets are mapped to harts sequentially, 
 //      with interrupt targets being added for each hart’s M-mode, 
 //      H-mode, S-mode, and U-mode contexts sequentially in that order.
+// The virt board we are using only supports M, S, and U mode so it will look like
+// 0: M
+// 1: S
+// 2: U
+// ... (more targets here if using more cores)
 
 // qemu puts UART registers here in physical memory.
 #define MEMLAYOUT_UART0 0x10000000L
 #define MEMLAYOUT_UART0_IRQ 10
 
-// qemu puts platform-level interrupt controller (PLIC) here.
+// qemu puts platform-level interrupt controller (PLIC) at 0x0c000000L.
 #define MEMLAYOUT_PLIC 0x0c000000L
-#define MEMLAYOUT_PLIC_PRIORITY (MEMLAYOUT_PLIC + 0x0)
+#define MEMLAYOUT_PLIC_PRIORITY(irq_num) (MEMLAYOUT_PLIC + (irq_num) * 0x4)
 #define MEMLAYOUT_PLIC_PENDING (MEMLAYOUT_PLIC + 0x1000)
-
-/*
-We know these are the locations of the target registers from
-the spec for the PLIC that qemu emulates:
-https://static.dev.sifive.com/SiFive-U5-Coreplex-v1.0.pdf
-Which says:
-    Interrupt targets are mapped to harts sequentially, 
-    with interrupt targets being added for each hart’s M-mode, 
-    H-mode, S-mode, and U-mode contexts sequentially in that order.
-It is also supporrted by the function that ultimately assigns
-the order to the target registers by parsing a config string
-https://github.com/qemu/qemu/blob/master/hw/intc/sifive_plic.c#L292
-*/
 #define MEMLAYOUT_PLIC_MENABLE(hart) (MEMLAYOUT_PLIC + 0x2000 + (hart) * 0x100)
 #define MEMLAYOUT_PLIC_MPRIORITY(hart) (MEMLAYOUT_PLIC + 0x200000 + (hart) * 0x2000)
 #define MEMLAYOUT_PLIC_MCLAIM(hart) (MEMLAYOUT_PLIC + 0x200004 + (hart) * 0x2000)

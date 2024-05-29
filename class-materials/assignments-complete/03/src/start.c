@@ -9,8 +9,12 @@ void start() {
     plic_init();
     plic_inithart();
     trap_inithart();
-    // enable machine-mode interrupts.
-    // TODO: Enable machine mode interrupts in mstatus
+    /* 
+    TODO: 
+    Globally enable machine mode interrupts in mstatus. The macros in riscv.h may be helpful here.
+    If you don't know how to do this, review the RISC-V privileged architecture, particularly the 
+    machine mode CSRs.
+    */
 /* BEGIN DELETE BLOCK */
     riscv_w_mstatus(riscv_r_mstatus() | RISCV_MSTATUS_MIE);     // globally enable machine mode interrupts
 /* BEGIN DELETE BLOCK */

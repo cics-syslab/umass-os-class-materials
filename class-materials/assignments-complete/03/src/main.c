@@ -13,13 +13,20 @@ void main_print_prompt() {
     uart_write(' ');
 }
 
-// We have separated the code that handles the command processing
-// from the code that handles the interrupt. Many operating systems
-// use this strategy creating a bottom-half and top-half of the
-// driver. The bottom half is small and fast to handle interrupts,
-// while the top half is larger and more complex. Later when we
-// implement threads and multiprocessing this separation will make
-// our lives much easier.
+/*
+TODO: Adapt your previous code from main.c to run as a interrupt
+handler. It should still behave as desribed in assignment 2, but
+now it will be called by our trap handling code, with the typed
+character as a parameter.
+
+This helps seperate the code that handles the command processing
+from the code that handles the interrupt. Many operating systems
+use this strategy creating a bottom-half and top-half of the
+driver. The bottom half is small and fast to handle interrupts,
+while the top half is larger and more complex. Later when we
+implement multiprocessing this separation will make our lives
+much easier.
+*/
 void main_handle_input(char c) {
 /* BEGIN DELETE BLOCK */
     if (c == MAIN_ASCII_NEW_LINE || c == MAIN_ASCII_CARRIAGE_RETURN) {
