@@ -1,0 +1,3 @@
+[submodule "umass-os-src"]
+	path = umass-os-src
+	url = https://github.com/cics-syslab/umass-os-src.git
